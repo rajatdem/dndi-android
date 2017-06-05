@@ -5,11 +5,16 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.example.msitese.dndiandroid"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "TWITTER_API_KEY", TWITTER_API_KEY)
+        buildConfigField("String", "TWITTER_API_SECRET", TWITTER_API_SECRET)
+        buildConfigField("String", "TWITTER_ACCESS_TOKEN", TWITTER_ACCESS_TOKEN)
+        buildConfigField("String", "TWITTER_ACCESS_SECRET", TWITTER_ACCESS_SECRET)
     }
     buildTypes {
         release {
@@ -27,4 +32,24 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+
+    // include the Bezirk middleware framework
+    compile(group: 'com.bezirk', name: 'android-zirk-proxy', version: '3.0.2-3', ext:'aar') {
+        exclude group: 'com.google.android'
+        transitive = true
+    }
+
+    // include twitter4j package
+    compile 'org.twitter4j:twitter4j-core:4.0.6'
+    compile 'org.twitter4j:twitter4j-async:4.0.6'
+    compile 'org.twitter4j:twitter4j-stream:4.0.6'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+}
+
+// add the Bezirk repository
+repositories {
+    jcenter()
+    maven {
+        url "https://bezirk.artifactoryonline.com/bezirk/libs-release-local"
+    }
 }
