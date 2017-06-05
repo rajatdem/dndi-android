@@ -33,6 +33,16 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
 
+    // use the Hamcrest matcher library
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+
+    // include Mokito for unit test
+    testCompile 'org.mockito:mockito-core:2.7.22'
+    androidTestCompile 'org.mockito:mockito-android:2.7.22'
+
+    // include json for testing
+    testCompile group: 'org.json', name: 'json', version: '20170516'
+
     // include the Bezirk middleware framework
     compile(group: 'com.bezirk', name: 'android-zirk-proxy', version: '3.0.2-3', ext:'aar') {
         exclude group: 'com.google.android'
