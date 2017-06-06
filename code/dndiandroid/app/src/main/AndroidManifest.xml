@@ -12,10 +12,18 @@
         <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--<service android:name=".TwitterService" />-->
+
+        <receiver android:name="com.bezirk.middleware.android.ZirkMessageReceiver">
+            <intent-filter>
+                <action android:name="com.bezirk.middleware.broadcast" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

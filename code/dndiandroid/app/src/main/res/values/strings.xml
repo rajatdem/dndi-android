@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">dndiandroid</string>
+    <string name="label_main_page">Hello Zirk!</string>
 </resources>
