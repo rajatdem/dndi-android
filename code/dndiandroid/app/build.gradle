@@ -56,6 +56,9 @@ dependencies {
     compile 'org.twitter4j:twitter4j-async:4.0.6'
     compile 'org.twitter4j:twitter4j-stream:4.0.6'
 
+    // include facebook package
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+
 }
 
 // add the Bezirk repository
@@ -64,4 +67,5 @@ repositories {
     maven {
         url "https://bezirk.artifactoryonline.com/bezirk/libs-release-local"
     }
+    mavenCentral()
 }
