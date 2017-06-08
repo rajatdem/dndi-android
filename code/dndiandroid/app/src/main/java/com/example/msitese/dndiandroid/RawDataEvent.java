@@ -11,23 +11,20 @@ import org.json.JSONObject;
 public class RawDataEvent extends Event {
 
     public enum GatherMode {
-        MODE_BATCH,
-        MODE_STREAMING,
+        BATCH,
+        STREAMING,
     }
 
-    private GatherMode type;
-    private String content;
+    public GatherMode type;
+    public String content;
+    public boolean hasText;
+    public boolean hasLocation;
 
     public RawDataEvent(GatherMode type, JSONObject jsonObject){
         this.type = type;
         this.content = jsonObject.toString();
+        this.hasText = false;
+        this.hasLocation = false;
     }
 
-    public GatherMode getType(){
-        return type;
-    }
-
-    public String getContent(){
-        return this.content;
-    }
 }

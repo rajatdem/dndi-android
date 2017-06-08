@@ -18,7 +18,8 @@
             </intent-filter>
         </activity>
 
-        <!--<service android:name=".TwitterService" />-->
+        <service android:name=".ConfigService" android:stopWithTask="true"/>
+        <!--<service android:name=".TwitterService" android:stopWithTask="true"/>-->
 
         <receiver android:name="com.bezirk.middleware.android.ZirkMessageReceiver">
             <intent-filter>
