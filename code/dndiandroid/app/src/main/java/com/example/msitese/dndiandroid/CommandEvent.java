@@ -14,7 +14,6 @@ class CommandEvent extends Event {
         CMD_PULL,
         CMD_PERIODIC,
         CMD_EVENT,
-        CMD_STREAMING_OFF,
     }
 
     public CmdType type = CmdType.CMD_DUMMY;

@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         // initialize the DNDI framework
@@ -29,5 +30,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickEvent(View view){
         dndi.configEventMode();
+    }
+
+    public void onClickTwitterOAuth(View view) {
+//        new GetTwitterTokenTask(this, dndi).execute();
     }
 }

@@ -53,6 +53,7 @@ public class ConfigService extends Service {
                 final RawDataEvent rawDataEvent = (RawDataEvent) event;
                 long time= System.currentTimeMillis();
                 Log.i(TAG, this.getClass().getName() + ":: Received message at " + time);
+                Log.i(TAG, this.getClass().getName() + ":: Content: " + rawDataEvent.content);
             }
         });
         bezirk.subscribe(eventSet);

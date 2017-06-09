@@ -46,13 +46,6 @@ public class DNDIFramework {
         }
     }
 
-    public void unRegisterService(){
-        if (mConfigServiceBinder != null) {
-            mContext.unbindService(mServerConn);
-            mConfigServiceBinder = null;
-        }
-    }
-
     public boolean addKeyword(String keyword){
         return true;
     }
@@ -78,6 +71,13 @@ public class DNDIFramework {
     public void configPeriodicMode(){
         if (mConfigServiceBinder != null) {
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PERIODIC);
+            mConfigServiceBinder.sendBezirkEvent(evt);
+        }
+    }
+
+    public void setTwitterAccessToken(){
+        if (mConfigServiceBinder != null) {
+            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_CONFIG_API_KEY);
             mConfigServiceBinder.sendBezirkEvent(evt);
         }
     }

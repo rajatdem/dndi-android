@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
     android:scrollbars="none"
     android:fillViewport="true">
 
@@ -41,7 +42,7 @@
             android:text=""
             android:textSize="20sp" />
 
-        <TextView
+        <EditText
             android:id="@+id/tvInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -125,11 +126,12 @@
                 android:text="BTN7" />
 
             <Button
-                android:id="@+id/btn8"
+                android:id="@+id/twitterOAuth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.50"
-                android:text="BTN8" />
+                android:onClick="onClickTwitterOAuth"
+                android:text="TWAuth" />
 
         </LinearLayout>
 
