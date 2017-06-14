@@ -1,14 +1,10 @@
 package com.example.msitese.dndiandroid;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.bezirk.middleware.Bezirk;
@@ -17,7 +13,6 @@ import com.bezirk.middleware.android.BezirkMiddleware;
 import com.bezirk.middleware.messages.Event;
 import com.bezirk.middleware.messages.EventSet;
 
-import java.util.List;
 
 /**
  * Created by Yu-Lun Tsai on 07/06/2017.
@@ -44,16 +39,20 @@ public class ConfigService extends Service {
         bezirk = BezirkMiddleware.registerZirk("Configuration Zirk");
 
 
-        final EventSet eventSet = new EventSet(RawDataEvent.class);
+        final EventSet eventSet = new EventSet(
+                RawDataEvent.class
+        );
+
         eventSet.setEventReceiver(new EventSet.EventReceiver() {
 
             @Override
             public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
 
-                final RawDataEvent rawDataEvent = (RawDataEvent) event;
-                long time= System.currentTimeMillis();
-                Log.i(TAG, this.getClass().getName() + ":: Received message at " + time);
-                Log.i(TAG, this.getClass().getName() + ":: Content: " + rawDataEvent.content);
+                if(event instanceof RawDataEvent){
+                    final RawDataEvent rawDataEvent = (RawDataEvent) event;
+                    long time= System.currentTimeMillis();
+                    Log.i(TAG, this.getClass().getName() + ":: \nReceived at " + time + rawDataEvent.toString());
+                }
             }
         });
         bezirk.subscribe(eventSet);

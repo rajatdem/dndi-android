@@ -2,29 +2,46 @@ package com.example.msitese.dndiandroid;
 
 import com.bezirk.middleware.messages.Event;
 
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
+
+import twitter4j.Status;
 
 /**
- * Created by larry on 30/03/2017.
+ * Created by Yu-Lun Tsai on 10/06/2017.
  */
 
 public class RawDataEvent extends Event {
 
     public enum GatherMode {
         BATCH,
+        PERIODIC,
         STREAMING,
     }
 
-    public GatherMode type;
-    public String content;
+    public RawDataEvent.GatherMode mode;
     public boolean hasText;
     public boolean hasLocation;
+    private List<RawData> array;
 
-    public RawDataEvent(GatherMode type, JSONObject jsonObject){
-        this.type = type;
-        this.content = jsonObject.toString();
-        this.hasText = false;
-        this.hasLocation = false;
+    public RawDataEvent(GatherMode mode){
+        this.mode = mode;
+        array = new ArrayList<>();
     }
 
+    public void appendRawData(RawData rawData){
+        array.add(rawData);
+    }
+
+    public String toString(){
+
+        StringBuilder sb = new StringBuilder();
+        for(RawData data: array){
+            sb.append("\n=======================");
+            sb.append("\nText: " + data.text);
+            sb.append("\nDate: " + data.date);
+            sb.append("\nLocation: " + data.location);
+        }
+        return sb.toString();
+    }
 }
