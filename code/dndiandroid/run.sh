@@ -4,7 +4,6 @@ main(){
     
     case $1 in
         "coverage")
-            echo coverage
             ./gradlew clean jacocoTestReport
             open app/build/reports/jacoco/jacocoTestReport/html/index.html
             ;;

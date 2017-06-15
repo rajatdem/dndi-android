@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.bezirk.middleware.Bezirk;
@@ -23,6 +24,10 @@ public class ConfigService extends Service {
     private static final String TAG = "ZIRK";
 
     private Bezirk bezirk;
+    private final EventSet eventSet = new EventSet(
+            RawDataEvent.class
+    );
+
     private final IBinder mBinder = new ConfigServiceBinder();
     private final Class<?> [] services = {
 //            TwitterService.class,
@@ -37,11 +42,6 @@ public class ConfigService extends Service {
 
         // register with Bezirk middleware to get an instance of Bezirk API.
         bezirk = BezirkMiddleware.registerZirk("Configuration Zirk");
-
-
-        final EventSet eventSet = new EventSet(
-                RawDataEvent.class
-        );
 
         eventSet.setEventReceiver(new EventSet.EventReceiver() {
 
@@ -60,7 +60,11 @@ public class ConfigService extends Service {
         for(Class<?> cls: services){
             startService(new Intent(getBaseContext(), cls));
         }
-        Log.i(TAG, this.getClass().getName() + ":: Wait...");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_NOT_STICKY;
     }
 
     @Nullable
@@ -77,5 +81,15 @@ public class ConfigService extends Service {
 
     public void sendBezirkEvent(Event evt){
         bezirk.sendEvent(evt);
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public void setBezirkInstance(Bezirk bezirk){
+        this.bezirk = bezirk;
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public void setEventSetSubscriptionHandler(EventSet.EventReceiver receiver){
+        eventSet.setEventReceiver(receiver);
     }
 }
