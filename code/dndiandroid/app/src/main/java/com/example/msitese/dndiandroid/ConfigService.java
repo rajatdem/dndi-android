@@ -41,7 +41,7 @@ public class ConfigService extends Service {
         BezirkMiddleware.initialize(this);
 
         // register with Bezirk middleware to get an instance of Bezirk API.
-        bezirk = BezirkMiddleware.registerZirk("Configuration Zirk");
+        bezirk = BezirkMiddleware.registerZirk("ConfigZirk");
 
         eventSet.setEventReceiver(new EventSet.EventReceiver() {
 
@@ -91,5 +91,17 @@ public class ConfigService extends Service {
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public void setEventSetSubscriptionHandler(EventSet.EventReceiver receiver){
         eventSet.setEventReceiver(receiver);
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public EventSet.EventReceiver getEventSetSubscriptionHandler(){
+        return eventSet.getEventReceiver();
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public void stopChildrenService(){
+        for(Class<?> cls: services){
+            stopService(new Intent(getBaseContext(), cls));
+        }
     }
 }

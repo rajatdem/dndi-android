@@ -20,7 +20,7 @@
         </activity>
 
         <service android:name=".ConfigService" android:stopWithTask="true"/>
-        <!--<service android:name=".TwitterService" android:stopWithTask="true"/>-->
+        <!--<service android:name="edu.cmu.msitese.dndiandroid.twitter.TwitterService" android:stopWithTask="true"/>-->
 
         <receiver android:name="com.bezirk.middleware.android.ZirkMessageReceiver">
             <intent-filter>

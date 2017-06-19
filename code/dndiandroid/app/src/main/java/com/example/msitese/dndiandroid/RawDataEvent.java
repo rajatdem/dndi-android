@@ -5,8 +5,6 @@ import com.bezirk.middleware.messages.Event;
 import java.util.ArrayList;
 import java.util.List;
 
-import twitter4j.Status;
-
 /**
  * Created by Yu-Lun Tsai on 10/06/2017.
  */

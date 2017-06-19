@@ -6,9 +6,9 @@ import com.bezirk.middleware.messages.Event;
  * Created by larry on 30/03/2017.
  */
 
-class CommandEvent extends Event {
+public class CommandEvent extends Event {
 
-    enum CmdType {
+    public enum CmdType {
         CMD_DUMMY,
         CMD_CONFIG_API_KEY,
         CMD_PULL,
@@ -16,14 +16,15 @@ class CommandEvent extends Event {
         CMD_EVENT,
     }
 
+    public String target = "";
     public CmdType type = CmdType.CMD_DUMMY;
     public String extra = "";
 
-    public CommandEvent(CmdType type){
+    CommandEvent(CmdType type){
         this.type = type;
     }
 
-    public CommandEvent(CmdType type, String extra){
+    CommandEvent(CmdType type, String extra){
         this.type = type;
         this.extra = extra;
     }

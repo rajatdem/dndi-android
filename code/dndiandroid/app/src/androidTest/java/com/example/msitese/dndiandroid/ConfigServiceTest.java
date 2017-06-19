@@ -30,10 +30,13 @@ public class ConfigServiceTest {
     @Rule
     public final ServiceTestRule mServiceRule = new ServiceTestRule();
 
-    @Test(timeout = 5000)
+    @Test(timeout = 10000)
     public void testWithBoundService() throws Exception {
 
         Intent serviceIntent = new Intent(InstrumentationRegistry.getTargetContext(), ConfigService.class);
+
+        mServiceRule.startService(
+                new Intent(InstrumentationRegistry.getTargetContext(), ConfigService.class));
 
         // Bind the service and grab a reference to the binder.
         IBinder binder = mServiceRule.bindService(serviceIntent);
@@ -56,6 +59,7 @@ public class ConfigServiceTest {
         verify(spyBezirk, times(1)).sendEvent(mockEvent);
 
         final Object syncObject = new Object();
+        EventSet.EventReceiver old = service.getEventSetSubscriptionHandler();
 
         // set eventSet receiver handler
         service.setEventSetSubscriptionHandler(new EventSet.EventReceiver(){
@@ -78,6 +82,17 @@ public class ConfigServiceTest {
         synchronized (syncObject){
             syncObject.wait();
         }
+
+        // resume the original eventSet.receiver
+        service.setEventSetSubscriptionHandler(old);
+        realBezirk.sendEvent(dummyEvent);
+
+        // unregister testing zirk
         realBezirk.unregisterZirk();
+
+        // terminate child services
+        service.stopChildrenService();
+
+        BezirkMiddleware.stop();
     }
 }
