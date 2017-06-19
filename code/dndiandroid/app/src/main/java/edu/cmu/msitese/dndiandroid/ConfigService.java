@@ -1,4 +1,4 @@
-package com.example.msitese.dndiandroid;
+package edu.cmu.msitese.dndiandroid;
 
 import android.app.Service;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import com.bezirk.middleware.addressing.ZirkEndPoint;
 import com.bezirk.middleware.android.BezirkMiddleware;
 import com.bezirk.middleware.messages.Event;
 import com.bezirk.middleware.messages.EventSet;
+
+//import edu.cmu.msitese.dndiandroid.twitter.TwitterService;
 
 
 /**

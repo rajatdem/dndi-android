@@ -1,4 +1,4 @@
-package com.example.msitese.dndiandroid;
+package edu.cmu.msitese.dndiandroid;
 
 import android.content.Intent;
 import android.os.IBinder;

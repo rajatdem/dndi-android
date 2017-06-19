@@ -1,4 +1,4 @@
-package com.example.msitese.dndiandroid;
+package edu.cmu.msitese.dndiandroid;
 
 import java.io.Serializable;
 

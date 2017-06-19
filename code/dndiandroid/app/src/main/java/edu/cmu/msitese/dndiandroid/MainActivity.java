@@ -1,4 +1,4 @@
-package com.example.msitese.dndiandroid;
+package edu.cmu.msitese.dndiandroid;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -6,6 +6,9 @@ import android.view.View;
 import android.widget.EditText;
 
 import java.util.List;
+
+//import edu.cmu.msitese.dndiandroid.twitter.TwitterDAO;
+//import edu.cmu.msitese.dndiandroid.twitter.GetTwitterTokenTask;
 
 
 public class MainActivity extends AppCompatActivity implements DNDIFrameworkListener {
@@ -20,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
         super.onCreate(savedInstanceState);
 
         // config layout and UI components
-        setContentView(R.layout.activity_main);
+        setContentView(edu.cmu.msitese.dndiandroid.R.layout.activity_main);
         configUIComponents();
 
         // initialize the DNDI framework
@@ -33,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     private void configUIComponents(){
-        mEditTestInput = (EditText) findViewById(R.id.etInput);
+        mEditTestInput = (EditText) findViewById(edu.cmu.msitese.dndiandroid.R.id.etInput);
     }
 
     public void onClickPull(View view){
@@ -65,11 +68,11 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void configTwitterCredential(String token, String secret, String screenName){
-//        dndi.configTwitterCredential(token, secret, screenName);
+        dndi.configTwitterCredential(token, secret, screenName);
     }
 
     public void onClickClearPreference(View view){
-//        CredentialDAO dao = new CredentialDAO(this);
+//        TwitterDAO dao = new TwitterDAO(this);
 //        dao.clearTwitterCredential();
     }
 }
