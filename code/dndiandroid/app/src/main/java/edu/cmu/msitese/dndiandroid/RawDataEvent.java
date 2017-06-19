@@ -36,9 +36,9 @@ public class RawDataEvent extends Event {
         StringBuilder sb = new StringBuilder();
         for(RawData data: array){
             sb.append("\n=======================");
-            sb.append("\nText: " + data.text);
-            sb.append("\nDate: " + data.date);
-            sb.append("\nLocation: " + data.location);
+            sb.append("\nText: " + data.getText());
+            sb.append("\nDate: " + data.getDate());
+            sb.append("\nLocation: " + data.getLocation());
         }
         return sb.toString();
     }

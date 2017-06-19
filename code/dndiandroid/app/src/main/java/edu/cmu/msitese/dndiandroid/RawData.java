@@ -7,7 +7,32 @@ import java.io.Serializable;
  */
 
 public class RawData implements Serializable {
-    String date;
-    String text;
-    String location;
+    private String date;
+    private String text;
+    private String location;
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getDate() {
+
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 }
