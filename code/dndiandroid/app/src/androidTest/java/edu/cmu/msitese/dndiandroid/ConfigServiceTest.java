@@ -15,7 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
-import edu.cmu.msitese.dndiandroid.framework.ConfigService;
+import edu.cmu.msitese.dndiandroid.frameworkinterface.ConfigService;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.mockito.Mockito.doNothing;

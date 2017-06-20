@@ -11,7 +11,7 @@ import com.google.android.gms.location.LocationServices;
 
 import edu.cmu.msitese.dndiandroid.event.RawData;
 import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
-import edu.cmu.msitese.dndiandroid.framework.ConfigService;
+import edu.cmu.msitese.dndiandroid.frameworkinterface.ConfigService;
 
 
 public class LocationDataService extends ConfigService {

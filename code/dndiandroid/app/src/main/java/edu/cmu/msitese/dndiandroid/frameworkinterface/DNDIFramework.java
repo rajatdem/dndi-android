@@ -1,4 +1,4 @@
-package edu.cmu.msitese.dndiandroid.framework;
+package edu.cmu.msitese.dndiandroid.frameworkinterface;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;

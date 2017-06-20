@@ -1,4 +1,4 @@
-package edu.cmu.msitese.dndiandroid.framework;
+package edu.cmu.msitese.dndiandroid.frameworkinterface;
 
 import android.app.Service;
 import android.content.Intent;

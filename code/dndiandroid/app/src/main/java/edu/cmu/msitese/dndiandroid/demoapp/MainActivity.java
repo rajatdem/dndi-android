@@ -9,8 +9,8 @@ import android.widget.EditText;
 import java.util.List;
 
 import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
-import edu.cmu.msitese.dndiandroid.framework.DNDIFramework;
-import edu.cmu.msitese.dndiandroid.framework.DNDIFrameworkListener;
+import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
+import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFrameworkListener;
 
 //import edu.cmu.msitese.dndiandroid.twitter.TwitterDAO;
 //import edu.cmu.msitese.dndiandroid.twitter.GetTwitterTokenTask;
