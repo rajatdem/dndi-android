@@ -1,4 +1,4 @@
-package edu.cmu.msitese.dndiandroid;
+package edu.cmu.msitese.dndiandroid.event;
 
 import com.bezirk.middleware.messages.Event;
 
@@ -20,11 +20,11 @@ public class CommandEvent extends Event {
     public CmdType type = CmdType.CMD_DUMMY;
     public String extra = "";
 
-    CommandEvent(CmdType type){
+    public CommandEvent(CmdType type){
         this.type = type;
     }
 
-    CommandEvent(CmdType type, String extra){
+    public CommandEvent(CmdType type, String extra){
         this.type = type;
         this.extra = extra;
     }
