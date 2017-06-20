@@ -1,24 +1,16 @@
-package edu.cmu.msitese.dndiandroid.demoApp;
+package edu.cmu.msitese.dndiandroid.demoapp;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import com.bezirk.middleware.Bezirk;
-import com.bezirk.middleware.addressing.ZirkEndPoint;
-import com.bezirk.middleware.android.BezirkMiddleware;
-import com.bezirk.middleware.messages.Event;
-import com.bezirk.middleware.messages.EventSet;
-
 import java.util.List;
 
-import edu.cmu.msitese.dndiandroid.dataGathering.LocationDataService;
-import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
-import edu.cmu.msitese.dndiandroid.frameworkInterface.DNDIFramework;
-import edu.cmu.msitese.dndiandroid.frameworkInterface.DNDIFrameworkListener;
+import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
+import edu.cmu.msitese.dndiandroid.framework.DNDIFramework;
+import edu.cmu.msitese.dndiandroid.framework.DNDIFrameworkListener;
 
 //import edu.cmu.msitese.dndiandroid.twitter.TwitterDAO;
 //import edu.cmu.msitese.dndiandroid.twitter.GetTwitterTokenTask;

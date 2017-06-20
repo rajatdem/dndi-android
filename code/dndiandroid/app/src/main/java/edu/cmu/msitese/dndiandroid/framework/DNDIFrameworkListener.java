@@ -1,4 +1,4 @@
-package edu.cmu.msitese.dndiandroid.frameworkInterface;
+package edu.cmu.msitese.dndiandroid.framework;
 
 import java.util.List;
 

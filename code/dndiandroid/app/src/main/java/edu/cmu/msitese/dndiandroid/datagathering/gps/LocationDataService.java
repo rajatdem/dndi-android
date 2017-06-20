@@ -1,9 +1,9 @@
-package edu.cmu.msitese.dndiandroid.dataGathering;
+package edu.cmu.msitese.dndiandroid.datagathering.gps;
 
-import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -11,12 +11,12 @@ import com.google.android.gms.location.LocationServices;
 
 import edu.cmu.msitese.dndiandroid.event.RawData;
 import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
-import edu.cmu.msitese.dndiandroid.frameworkInterface.ConfigService;
+import edu.cmu.msitese.dndiandroid.framework.ConfigService;
 
 
 public class LocationDataService extends ConfigService {
 
-    private static final String TAG = "LocationDataGatheringZirk";
+    private static final String TAG = "LocationDataGathrngZirk";
     private final IBinder mBinder = new LocationDataServiceBinder();
     private RawData rawData;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -54,6 +54,7 @@ public class LocationDataService extends ConfigService {
     public void sendMessage(){
         rawData = new RawData();
         rawData.setLocation("Pittsburgh");
+        Log.i(TAG, "Sending over the Middleware");
         RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
         event.appendRawData(rawData);
         this.sendBezirkEvent(event);

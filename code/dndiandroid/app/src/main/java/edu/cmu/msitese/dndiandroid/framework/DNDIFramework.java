@@ -1,4 +1,4 @@
-package edu.cmu.msitese.dndiandroid.frameworkInterface;
+package edu.cmu.msitese.dndiandroid.framework;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -9,7 +9,7 @@ import android.os.IBinder;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
-import edu.cmu.msitese.dndiandroid.util.CommandEvent;
+import edu.cmu.msitese.dndiandroid.event.CommandEvent;
 
 /**
  * Created by Yu-Lun Tsai on 07/06/2017.
