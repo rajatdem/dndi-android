@@ -1,4 +1,4 @@
-package com.example.msitese.dndigatheringzirks;
+package edu.cmu.msitese.dndiandroid.dataGathering;
 
 import android.app.Service;
 import android.content.Intent;
@@ -6,17 +6,15 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.widget.Toast;
 
-import com.bezirk.middleware.Bezirk;
-import com.bezirk.middleware.android.BezirkMiddleware;
-import com.bezirk.middleware.messages.Event;
-import com.example.msitese.dndiandroid.ConfigService;
-import com.example.msitese.dndiandroid.RawData;
-import com.example.msitese.dndiandroid.RawDataEvent;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
+import edu.cmu.msitese.dndiandroid.event.RawData;
+import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
+import edu.cmu.msitese.dndiandroid.frameworkInterface.ConfigService;
 
-public class LocationDataService extends Service {
+
+public class LocationDataService extends ConfigService {
 
     private static final String TAG = "LocationDataGatheringZirk";
     private final IBinder mBinder = new LocationDataServiceBinder();
@@ -32,7 +30,6 @@ public class LocationDataService extends Service {
     public void onCreate() {
         super.onCreate();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
     }
 
     @Override

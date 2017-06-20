@@ -14,6 +14,9 @@ import com.bezirk.middleware.messages.EventSet;
 import org.junit.Rule;
 import org.junit.Test;
 
+import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
+import edu.cmu.msitese.dndiandroid.frameworkInterface.ConfigService;
+
 import static junit.framework.Assert.assertNotNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;

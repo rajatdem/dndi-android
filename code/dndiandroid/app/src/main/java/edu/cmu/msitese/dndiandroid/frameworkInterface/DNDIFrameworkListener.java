@@ -1,4 +1,4 @@
-package edu.cmu.msitese.dndiandroid;
+package edu.cmu.msitese.dndiandroid.frameworkInterface;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import java.util.List;
  * Created by Yu-Lun Tsai on 09/06/2017.
  */
 
-interface DNDIFrameworkListener {
+public interface DNDIFrameworkListener {
 
     void onKeywordMatch(List<String> keywords);
 }

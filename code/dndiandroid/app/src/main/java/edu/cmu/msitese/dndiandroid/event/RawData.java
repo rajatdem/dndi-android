@@ -1,4 +1,4 @@
-package edu.cmu.msitese.dndiandroid;
+package edu.cmu.msitese.dndiandroid.event;
 
 import java.io.Serializable;
 

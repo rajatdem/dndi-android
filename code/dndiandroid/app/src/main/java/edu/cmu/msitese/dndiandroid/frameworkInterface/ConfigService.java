@@ -1,4 +1,4 @@
-package edu.cmu.msitese.dndiandroid;
+package edu.cmu.msitese.dndiandroid.frameworkInterface;
 
 import android.app.Service;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import com.bezirk.middleware.addressing.ZirkEndPoint;
 import com.bezirk.middleware.android.BezirkMiddleware;
 import com.bezirk.middleware.messages.Event;
 import com.bezirk.middleware.messages.EventSet;
+
+import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
 
 //import edu.cmu.msitese.dndiandroid.twitter.TwitterService;
 
@@ -76,7 +78,7 @@ public class ConfigService extends Service {
     }
 
     public class ConfigServiceBinder extends Binder {
-        ConfigService getService() {
+       ConfigService getService() {
             return ConfigService.this;
         }
     }

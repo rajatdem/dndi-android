@@ -1,11 +1,24 @@
-package edu.cmu.msitese.dndiandroid;
+package edu.cmu.msitese.dndiandroid.demoApp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.bezirk.middleware.Bezirk;
+import com.bezirk.middleware.addressing.ZirkEndPoint;
+import com.bezirk.middleware.android.BezirkMiddleware;
+import com.bezirk.middleware.messages.Event;
+import com.bezirk.middleware.messages.EventSet;
+
 import java.util.List;
+
+import edu.cmu.msitese.dndiandroid.dataGathering.LocationDataService;
+import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
+import edu.cmu.msitese.dndiandroid.frameworkInterface.DNDIFramework;
+import edu.cmu.msitese.dndiandroid.frameworkInterface.DNDIFrameworkListener;
 
 //import edu.cmu.msitese.dndiandroid.twitter.TwitterDAO;
 //import edu.cmu.msitese.dndiandroid.twitter.GetTwitterTokenTask;
@@ -74,5 +87,15 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     public void onClickClearPreference(View view){
 //        TwitterDAO dao = new TwitterDAO(this);
 //        dao.clearTwitterCredential();
+    }
+
+    public void onClickGPS(View view){
+        //TODO: GET the GPS Coordinates.
+        startService(new Intent(getBaseContext(), LocationDataService.class));
+    }
+
+    // Method to stop the service
+    public void stopServiceGPS(View view) {
+        stopService(new Intent(getBaseContext(), LocationDataService.class));
     }
 }
