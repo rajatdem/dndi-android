@@ -30,6 +30,7 @@ public class RawDataEvent extends Event {
     public void appendRawData(RawData rawData){
         array.add(rawData);
     }
+    public List<RawData> getRawDataArray() { return array; }
 
     public String toString(){
 
