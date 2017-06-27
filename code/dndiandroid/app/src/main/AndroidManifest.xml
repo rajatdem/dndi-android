@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.cmu.msitese.dndiandroid" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="edu.cmu.msitese.dndiandroid">
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +14,7 @@
         android:name="android.support.multidex.MultiDexApplication"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="edu.cmu.msitese.dndiandroid.demoapp.MainActivity"
+            android:name=".demoapp.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,7 +28,25 @@
         <service android:name="edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService" android:stopWithTask="true"/>
         <service android:name="edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordMatchService" android:stopWithTask="true"/>
         <!--<service android:name="edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService" android:stopWithTask="true"/>-->
+        <activity
+            android:name=".datagathering.gps.LocationActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.EMBED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_SERVICE"
+                android:value="edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService" />
+        </activity>
 
+        <service
+            android:name=".frameworkinterface.ConfigService"
+            android:stopWithTask="true" />
+        <!-- <service android:name="edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService" android:stopWithTask="true"/> -->
+        <service
+            android:name=".datagathering.gps.LocationDataService"
+            android:stopWithTask="true" />
         <receiver android:name="com.bezirk.middleware.android.ZirkMessageReceiver">
             <intent-filter>
                 <action android:name="com.bezirk.middleware.broadcast" />

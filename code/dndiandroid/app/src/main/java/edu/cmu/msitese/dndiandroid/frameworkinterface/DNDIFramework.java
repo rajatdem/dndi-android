@@ -1,5 +1,7 @@
 package edu.cmu.msitese.dndiandroid.frameworkinterface;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -28,11 +30,10 @@ public class DNDIFramework {
     // static tag with string type used for filtering console output
     private static final String TAG = "ZIRK";
 
-    // static keys with string type used to label data segment in the broadcast intent
+    // members used for interact with the config service
     public static final String KEYWORD_MATCH = "cmu.edu.msitese.dndiandroid.DNDIFramework.MATCH_EVENT";
     public static final String ERROR = "cmu.edu.msitese.dndiandroid.DNDIFramework.ERROR";
-
-    // members used for interact with the config service
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     private Context mContext;
     private ZirkManagerService mZirkManagerService;
     private boolean isBound = false;
@@ -82,7 +83,7 @@ public class DNDIFramework {
     public void resume(){
         IntentFilter filter = new IntentFilter(ZirkManagerService.ACTION);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(mBroadcastReceiver, filter);
-    }
+   }
 
     // unbind the broadcast sebt by the config service
     public void pause(){

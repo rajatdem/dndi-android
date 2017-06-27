@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     @Override
+<<<<<<< HEAD
     protected void onResume(){
         super.onResume();
         dndi.resume();
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     protected void onDestroy(){
         dndi.stop();
         super.onDestroy();
-    }
+   }
 
     @Override
     public void onKeywordMatch(List<String> keywords) {
