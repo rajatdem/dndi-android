@@ -6,6 +6,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.bezirk.middleware.Bezirk;
@@ -14,9 +15,9 @@ import com.bezirk.middleware.android.BezirkMiddleware;
 import com.bezirk.middleware.messages.Event;
 import com.bezirk.middleware.messages.EventSet;
 
-import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
-
-//import edu.cmu.msitese.dndiandroid.twitter.TwitterService;
+//import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordMatchService;
+//import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
+import edu.cmu.msitese.dndiandroid.event.ResultEvent;
 
 
 /**
@@ -26,15 +27,17 @@ import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
 public class ConfigService extends Service {
 
     private static final String TAG = "ZIRK";
+    public static final String ACTION = "edu.cmu.msitese.dndiandroid.ConfigService";
 
     private Bezirk bezirk;
     private final EventSet eventSet = new EventSet(
-            RawDataEvent.class
+            ResultEvent.class
     );
 
     private final IBinder mBinder = new ConfigServiceBinder();
     private final Class<?> [] services = {
 //            TwitterService.class,
+//            KeywordMatchService.class
     };
 
     /** Called when the service is being created. */
@@ -42,7 +45,7 @@ public class ConfigService extends Service {
     public void onCreate() {
 
         // initialize the Bezirk service
-        BezirkMiddleware.initialize(this);
+        BezirkMiddleware.initialize(getBaseContext());
 
         // register with Bezirk middleware to get an instance of Bezirk API.
         bezirk = BezirkMiddleware.registerZirk("ConfigZirk");
@@ -52,10 +55,12 @@ public class ConfigService extends Service {
             @Override
             public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
 
-                if(event instanceof RawDataEvent){
-                    final RawDataEvent rawDataEvent = (RawDataEvent) event;
-                    long time= System.currentTimeMillis();
-                    Log.i(TAG, this.getClass().getName() + ":: \nReceived at " + time + rawDataEvent.toString());
+                if(event instanceof ResultEvent){
+                    final ResultEvent resultEvent = (ResultEvent) event;
+                    Intent intent = new Intent(ACTION);
+                    intent.putExtra("result", DNDIFramework.KEYWORD_MATCH);
+                    intent.putStringArrayListExtra("keywords", resultEvent.getMatchList());
+                    LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
                 }
             }
         });
@@ -64,6 +69,7 @@ public class ConfigService extends Service {
         for(Class<?> cls: services){
             startService(new Intent(getBaseContext(), cls));
         }
+        Log.i(TAG, this.getClass().getName() + ":: wait...");
     }
 
     @Override
@@ -77,14 +83,15 @@ public class ConfigService extends Service {
         return mBinder;
     }
 
-    public class ConfigServiceBinder extends Binder {
-       ConfigService getService() {
-            return ConfigService.this;
-        }
-    }
-
     public void sendBezirkEvent(Event evt){
         bezirk.sendEvent(evt);
+    }
+
+    public class ConfigServiceBinder extends Binder {
+        @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+       public ConfigService getService() {
+            return ConfigService.this;
+        }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
