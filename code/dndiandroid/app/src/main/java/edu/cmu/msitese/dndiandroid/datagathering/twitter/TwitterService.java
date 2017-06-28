@@ -36,6 +36,7 @@ public class TwitterService extends Service {
 
     private static final String TAG = "ZIRK";
 
+    // load consumer key and secret from the build configuration
     private static final String TWITTER_API_KEY = BuildConfig.TWITTER_API_KEY;
     private static final String TWITTER_API_SECRET = BuildConfig.TWITTER_API_SECRET;
 
@@ -45,8 +46,9 @@ public class TwitterService extends Service {
     private TwitterStream twitterStream;
     private boolean streamRunning = false;
 
-    private boolean mHasToken;
-    private String mUserScreenName = "";
+    // a flag that records whether the access token has been loaded
+    private boolean mTokenLoaded;
+    private String mScreenName = "";
 
     // Twitter Zirk operation modes
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -65,6 +67,7 @@ public class TwitterService extends Service {
         }
     };
 
+    // used only for testing
     private final IBinder mBinder = new TwitterServiceBinder();
 
     @Override
@@ -75,7 +78,7 @@ public class TwitterService extends Service {
 
         // init twitter api
         initTwitterInterface();
-        mHasToken = loadTwitterAccessToken();
+        mTokenLoaded = loadTwitterAccessToken();
 
         // register the Bezirk middleware interface
         bezirk = BezirkMiddleware.registerZirk("TwitterZirk");
@@ -90,7 +93,7 @@ public class TwitterService extends Service {
                 CommandEvent.CmdType cmdType = commandEvent.type;
 
                 Log.i(TAG, this.getClass().getName() + ":: received " + cmdType);
-                if(!mHasToken && cmdType != CommandEvent.CmdType.CMD_CONFIG_API_KEY){
+                if(!mTokenLoaded && cmdType != CommandEvent.CmdType.CMD_CONFIG_API_KEY){
                     Log.w(TAG, "Configure the Twitter credential first");
                     return;
                 }
@@ -105,7 +108,7 @@ public class TwitterService extends Service {
 
                 switch (cmdType) {
                     case CMD_CONFIG_API_KEY:
-                        mHasToken = configTwitterAccessToken(commandEvent.extra);
+                        mTokenLoaded = configTwitterAccessToken(commandEvent.extra);
                         break;
                     case CMD_PERIODIC:
                         mMode = Mode.PERIODIC;
@@ -138,6 +141,7 @@ public class TwitterService extends Service {
         return mBinder;
     }
 
+    // set the consumer API key to the twitter4j interface
     private void initTwitterInterface(){
         twitter = new TwitterFactory().getInstance();
         twitterStream = new TwitterStreamFactory().getInstance();
@@ -145,6 +149,7 @@ public class TwitterService extends Service {
         twitterStream.setOAuthConsumer(TWITTER_API_KEY, TWITTER_API_SECRET);
     }
 
+    // load twitter user access token from sharedPreference
     private boolean loadTwitterAccessToken(){
 
         TwitterDAO dao = new TwitterDAO(this);
@@ -157,20 +162,21 @@ public class TwitterService extends Service {
         if(screenName.equals("")){
             return false;
         }
-        mUserScreenName = credential.screenName;
+        mScreenName = credential.screenName;
         twitter.setOAuthAccessToken(new AccessToken(token, secret));
         twitterStream.setOAuthAccessToken(new AccessToken(token, secret));
         return true;
     }
 
+    // parse the user access token from the json file and store it into sharedPreferecne
     private boolean configTwitterAccessToken(String jsonStr){
 
         TwitterCredential credential = Utils.getTwitterCredentialFromJSONRaw(jsonStr);
         TwitterDAO dao = new TwitterDAO(this);
         dao.saveTwitterCredential(credential.token, credential.secret, credential.screenName);
 
-        mUserScreenName = credential.screenName;
-        if(mUserScreenName.equals("")){
+        mScreenName = credential.screenName;
+        if(mScreenName.equals("")){
             return false;
         }
         twitter.setOAuthAccessToken(new AccessToken(credential.token, credential.secret));
@@ -178,26 +184,34 @@ public class TwitterService extends Service {
         return true;
     }
 
+    // start a timer that create an async tasks periodically to pull the latest tweet
     private void startPeriodicTask(){
         mHandler.postDelayed(mRunnablePullTask, mPeriod);
     }
 
+    // terminate the periodic task if it exists
     private void terminatePeriodicTask(){
         mHandler.removeCallbacks(mRunnablePullTask);
     }
 
-    private void pullTweetsAll(){ new GetTweetsInBatchTask(bezirk, twitter, mUserScreenName).execute(); }
+    // pull all the tweets in on operation
+    private void pullTweetsAll(){ new GetTweetsInBatchTask(bezirk, twitter, mScreenName).execute(); }
 
-    private void pullTweetsByNum(int num){ new GetTweetsInBatchTask(bezirk, twitter, mUserScreenName).execute(num); }
+    // specify the number of tweets as the first argument and create an async task to do it
+    private void pullTweetsByNum(int num){ new GetTweetsInBatchTask(bezirk, twitter, mScreenName).execute(num); }
 
-    private void pullTweetsPeriodic(){ new GetTweetsPeriodicTask(getBaseContext(), bezirk, twitter, mUserScreenName).execute(); }
+    // helper function for create a periodic async task
+    private void pullTweetsPeriodic(){ new GetTweetsPeriodicTask(getBaseContext(), bezirk, twitter, mScreenName).execute(); }
 
+    // callback functions that is callable by twitterStream listener
     public void sendTwitterEventNotification(Status status){
         final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.STREAMING);
         event.appendRawData(Utils.packTweetToRawDataFormat(status));
+        Log.i(TAG, event.toString());
         bezirk.sendEvent(event);
     }
 
+    // start twitter streaming api
     private void registerTwitterStreaming(){
         // TwitterStream.user() method internally creates a thread to call these listener methods
         final UserStreamListener listener = new TwitterStreamListener(this);
@@ -210,6 +224,7 @@ public class TwitterService extends Service {
         }
     }
 
+    // termiante twitter streaming api
     private void terminateTwitterStreaming(){
         twitterStream.clearListeners();
 
@@ -217,6 +232,7 @@ public class TwitterService extends Service {
         // twitterStream.cleanUp();
     }
 
+    // For testing purpose only
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     public class TwitterServiceBinder extends Binder {
         public TwitterService getService() {

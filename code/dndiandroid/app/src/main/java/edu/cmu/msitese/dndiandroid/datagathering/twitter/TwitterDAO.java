@@ -19,6 +19,7 @@ public class TwitterDAO {
         mContext = context;
     }
 
+    // save the specified token and secret into sharedPreference
     public void saveTwitterCredential(String token, String secret, String id){
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preference_file_key),
@@ -30,6 +31,7 @@ public class TwitterDAO {
         editor.commit();
     }
 
+    // load twitter access token from sharedPreference
     public TwitterCredential getTwitterCredential(){
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preference_file_key),
@@ -40,6 +42,7 @@ public class TwitterDAO {
         return new TwitterCredential(token, secret, id);
     }
 
+    // clear twitter access token in the sharedPreference (for demo purpose only)
     public void clearTwitterCredential(){
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preference_file_key),
@@ -51,6 +54,7 @@ public class TwitterDAO {
         editor.apply();
     }
 
+    // save the last tweet ID so that the periodic mode won't send out duplicate data
     public void saveLastTweetID(long id){
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preference_file_key),
@@ -60,6 +64,7 @@ public class TwitterDAO {
         editor.apply();
     }
 
+    // load the last tweet ID
     public long loadLastTweetID(){
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preference_file_key),

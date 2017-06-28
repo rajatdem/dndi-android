@@ -22,16 +22,17 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
 
     private static final String TAG = "ZIRK";
 
-    private Bezirk bezirk;
+    private Bezirk mBezirk;
     private Twitter mTwitter;
-    private String mUserScreenName;
+    private String mScreenName;
 
     private List<twitter4j.Status> statuses = new ArrayList<>();
 
+    // store a copy of mBezirk and twitter during construction
     public GetTweetsInBatchTask(Bezirk bezirk, Twitter twitter, String screenName){
-        this.bezirk = bezirk;
+        this.mBezirk = bezirk;
         this.mTwitter = twitter;
-        this.mUserScreenName = screenName;
+        this.mScreenName = screenName;
     }
 
     @Override
@@ -67,18 +68,21 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
             }
             event.hasText = true;
             event.hasLocation = true;
-            bezirk.sendEvent(event);
+
+            Log.i(TAG, event.toString());
+            mBezirk.sendEvent(event);
         }
         return null;
     }
 
+    // helper function that pull tweets based on page range
     private int pullTweetsByPageRange(int start, int end){
 
         while(start <= end) {
             try {
                 int size = statuses.size();
                 Paging page = new Paging(start++, 100);
-                statuses.addAll(mTwitter.getUserTimeline(mUserScreenName, page));
+                statuses.addAll(mTwitter.getUserTimeline(mScreenName, page));
                 if (statuses.size() == size){
                     break;
                 }
@@ -90,6 +94,7 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
         return start;
     }
 
+    // helper function that pull tweets based on the number
     private boolean pullTweetsByNum(int num){
 
         int totalPageNum = num/100;
@@ -103,7 +108,7 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
             try {
                 int size = statuses.size();
                 Paging page = new Paging(nextPageNum, tweetsPerPage);
-                statuses.addAll(mTwitter.getUserTimeline(mUserScreenName, page));
+                statuses.addAll(mTwitter.getUserTimeline(mScreenName, page));
                 if (statuses.size() == size || statuses.size() >= num){
                     break;
                 }

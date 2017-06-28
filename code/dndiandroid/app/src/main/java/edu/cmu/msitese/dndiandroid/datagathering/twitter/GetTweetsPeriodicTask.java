@@ -43,6 +43,9 @@ public class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
         return null;
     }
 
+    // load the last id from the sharedPreference first, and set it as one of the REST argument
+    // if there is anything new it will send a raw data event or it should print out no new tweets
+    // in the console
     private void pullTweetsSinceLastID(){
         TwitterDAO dao = new TwitterDAO(mContext);
         long lastID = dao.loadLastTweetID();
@@ -50,6 +53,7 @@ public class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
         List<twitter4j.Status>  statuses;
         Paging page = new Paging(1, 100);
 
+        // if the lastID is -1, there is no last id is stored in the sharedPreference
         if(lastID != -1){
             page.setSinceId(lastID);
         }
@@ -66,6 +70,8 @@ public class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
                     event.appendRawData(Utils.packTweetToRawDataFormat(status));
                     event.hasText = true;
                     event.hasLocation = true;
+
+                    Log.i(TAG, event.toString());
                     mBezirk.sendEvent(event);
                 }
 
