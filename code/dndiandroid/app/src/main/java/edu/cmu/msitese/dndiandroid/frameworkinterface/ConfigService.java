@@ -15,8 +15,7 @@ import com.bezirk.middleware.android.BezirkMiddleware;
 import com.bezirk.middleware.messages.Event;
 import com.bezirk.middleware.messages.EventSet;
 
-//import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordMatchService;
-//import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
 import edu.cmu.msitese.dndiandroid.event.ResultEvent;
 
 
@@ -36,8 +35,7 @@ public class ConfigService extends Service {
 
     private final IBinder mBinder = new ConfigServiceBinder();
     private final Class<?> [] services = {
-//            TwitterService.class,
-//            KeywordMatchService.class
+            TwitterService.class,
     };
 
     /** Called when the service is being created. */
