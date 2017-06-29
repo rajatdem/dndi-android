@@ -11,8 +11,9 @@ import android.os.IBinder;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.LocalBroadcastManager;
 
-//import org.json.JSONObject;
-//import edu.cmu.msitese.dndiandroid.Utils;
+import org.json.JSONObject;
+
+import edu.cmu.msitese.dndiandroid.Utils;
 import edu.cmu.msitese.dndiandroid.event.CommandEvent;
 
 import java.util.ArrayList;
@@ -23,15 +24,19 @@ import java.util.ArrayList;
 
 public class DNDIFramework {
 
+    // static tag with string type used for filtering console output
     private static final String TAG = "ZIRK";
 
+    // static keys with string type used to label data segment in the broadcast intent
     public static final String KEYWORD_MATCH = "cmu.edu.msitese.dndiandroid.DNDIFramework.MATCH_EVENT";
     public static final String ERROR = "cmu.edu.msitese.dndiandroid.DNDIFramework.ERROR";
 
+    // members used for interact with the config service
     private Context mContext;
     private ConfigService mConfigService;
     private boolean isBound = false;
 
+    // the service connection callback, it will get the service instance once the binding is completed
     private ServiceConnection mServerConn = new ServiceConnection() {
 
         @Override
@@ -46,6 +51,8 @@ public class DNDIFramework {
         }
     };
 
+    // the broadcast receiver callback that parse the intent and call corresponding callback
+    // functions
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 
         @Override
@@ -62,26 +69,31 @@ public class DNDIFramework {
         }
     };
 
+    // DNDIFramework constructor, the user should at least specify the context for it
     public DNDIFramework(Context context){
         this.mContext = context;
         bindToConfigService();
     }
 
+    // bind to the broadcast sent by config service
     public void resume(){
         IntentFilter filter = new IntentFilter(ConfigService.ACTION);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(mBroadcastReceiver, filter);
     }
 
+    // unbind the broadcast sebt by the config service
     public void pause(){
         LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiver);
     }
 
+    // unbind the config service
     public void stop(){
         if(isBound){
             mContext.unbindService(mServerConn);
         }
     }
 
+    // return true if the DNDI framework is ready to be interacted with
     public boolean ready(){
         return isBound;
     }
@@ -107,14 +119,16 @@ public class DNDIFramework {
         }
     }
 
+    // send twitter credential through the bezirk middleware
     public void configTwitterCredential(String token, String secret, String id){
         if (isBound) {
-//            JSONObject jsonObject = Utils.packCredentialToJSON(token, secret, id);
-//            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_CONFIG_API_KEY, jsonObject.toString());
-//            mConfigService.sendBezirkEvent(evt);
+            JSONObject jsonObject = Utils.packCredentialToJSON(token, secret, id);
+            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_CONFIG_API_KEY, jsonObject.toString());
+            mConfigService.sendBezirkEvent(evt);
         }
     }
 
+    // bind to the config service
     private void bindToConfigService(){
 
         if(isServiceRunning(ConfigService.class)){
@@ -126,6 +140,7 @@ public class DNDIFramework {
         }
     }
 
+    // check whether a service is running on the device
     private boolean isServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -136,6 +151,7 @@ public class DNDIFramework {
         return false;
     }
 
+    // constructor exposed for testing purpose only
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public DNDIFramework(Context context, ServiceConnection conn){
         this.mContext = context;
