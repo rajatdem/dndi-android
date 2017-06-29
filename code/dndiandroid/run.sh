@@ -7,6 +7,10 @@ main(){
             ./gradlew clean jacocoTestReport
             open app/build/reports/jacoco/jacocoTestReport/html/index.html
             ;;
+        "lint")
+            ./gradlew lint
+            open app/build/reports/lint-results.html
+            ;;
         *)
             usage
             ;;
