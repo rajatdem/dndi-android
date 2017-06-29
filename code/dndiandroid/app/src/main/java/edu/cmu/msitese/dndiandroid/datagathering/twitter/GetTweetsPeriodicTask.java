@@ -72,7 +72,6 @@ class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
             page.setSinceId(lastId);
         }
 
-
         statuses = mTwitter.getUserTimeline(mScreenName, page);
         if (!statuses.isEmpty()) {
 
