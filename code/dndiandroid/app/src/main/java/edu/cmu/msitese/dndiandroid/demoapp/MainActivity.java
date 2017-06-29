@@ -10,6 +10,7 @@ import java.util.List;
 
 //import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
+import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordCountDAO;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFrameworkListener;
 
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
             sb.append(" ");
             sb.append(keywords.get(i));
         }
-        Toast.makeText(getBaseContext(), "Match keywords:" + sb.toString(), Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Match with category:" + sb.toString(), Toast.LENGTH_LONG).show();
     }
 
     private void configUIComponents(){
@@ -98,8 +99,16 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void onClickClearPreference(View view){
-        TwitterDao dao = new TwitterDao(this);
-        dao.clearTwitterCredential();
+        TwitterDao twitterDao = new TwitterDao(this);
+        twitterDao.clearTwitterCredential();
+
+        KeywordCountDAO keywordCountDAO = new KeywordCountDAO(this);
+        keywordCountDAO.clearTable();
+    }
+
+    public void onClickDebugInferredResult(View view){
+        KeywordCountDAO dao = new KeywordCountDAO(this);
+        dao.printContentToConsole();
     }
 
     public void onClickGPS(View view){

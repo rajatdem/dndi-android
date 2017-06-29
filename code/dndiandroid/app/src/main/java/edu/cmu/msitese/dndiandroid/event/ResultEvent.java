@@ -14,7 +14,7 @@ public class ResultEvent extends Event {
 
     private Map<String, Integer> occurrence = new HashMap<>();
 
-    public void increaseKeywordMatchOccurrence(String keyword){
+    public void increaseMatchOccurrence(String keyword){
         int count = 0;
         if(occurrence.containsKey(keyword)){
             count = occurrence.get(keyword);
