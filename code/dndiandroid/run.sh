@@ -20,6 +20,7 @@ main(){
 usage(){
     printf "\nUsage: ./run.sh <command>\n\n"
     printf "coverage                   generate html coverage report\n"
+    printf "lint                       generate html lint analysis report\n"
     printf "\n"
     
 }
