@@ -2,8 +2,7 @@ package edu.cmu.msitese.dndiandroid;
 
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.rule.ServiceTestRule;
+import android.test.ServiceTestCase;
 
 import com.bezirk.middleware.Bezirk;
 import com.bezirk.middleware.addressing.ZirkEndPoint;
@@ -11,13 +10,13 @@ import com.bezirk.middleware.android.BezirkMiddleware;
 import com.bezirk.middleware.messages.Event;
 import com.bezirk.middleware.messages.EventSet;
 
-import org.junit.Rule;
 import org.junit.Test;
 
-import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
+import java.util.concurrent.TimeoutException;
+
+import edu.cmu.msitese.dndiandroid.event.ResultEvent;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.ConfigService;
 
-import static junit.framework.Assert.assertNotNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -28,21 +27,34 @@ import static org.mockito.Mockito.verify;
  * Created by Yu-Lun Tsai on 14/06/2017.
  */
 
-public class ConfigServiceTest {
+public class ConfigServiceTest extends ServiceTestCase<ConfigService> {
 
-    @Rule
-    public final ServiceTestRule mServiceRule = new ServiceTestRule();
+    public ConfigServiceTest() {
+        super(ConfigService.class);
+    }
 
-    @Test(timeout = 10000)
-    public void testWithBoundService() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
 
-        Intent serviceIntent = new Intent(InstrumentationRegistry.getTargetContext(), ConfigService.class);
+    @Test
+    public void testWithBoundService() throws TimeoutException {
+        IBinder binder = bindService(new Intent(getContext(), ConfigService.class));
+        ConfigService service = ((ConfigService.ConfigServiceBinder) binder).getService();
+    }
 
-        mServiceRule.startService(
-                new Intent(InstrumentationRegistry.getTargetContext(), ConfigService.class));
+    @Test
+    public void testWithStartedService() throws TimeoutException {
+        startService(new Intent(getContext(), ConfigService.class));
+        //do nothing
+    }
+
+    @Test(timeout=10000)
+    public void testSendBezirkEventDoesCallBezirkDotSend() throws Exception {
 
         // Bind the service and grab a reference to the binder.
-        IBinder binder = mServiceRule.bindService(serviceIntent);
+        IBinder binder = bindService(new Intent(getContext(), ConfigService.class));
 
         // Get the service handle
         ConfigService service = ((ConfigService.ConfigServiceBinder) binder).getService();
@@ -60,6 +72,17 @@ public class ConfigServiceTest {
         // config.sendBezirkEvent should definitely call bezirk.sendEvent
         service.sendBezirkEvent(mockEvent);
         verify(spyBezirk, times(1)).sendEvent(mockEvent);
+    }
+
+    @Test(timeout=10000)
+    public void testWhetherEventReceiverIsCalledWhenSendAnEvent() throws Exception {
+
+        // Bind the service and grab a reference to the binder.
+        IBinder binder = bindService(new Intent(getContext(), ConfigService.class));
+
+        // Get the service handle
+        ConfigService service = ((ConfigService.ConfigServiceBinder) binder).getService();
+        assertNotNull(service);
 
         final Object syncObject = new Object();
         EventSet.EventReceiver old = service.getEventSetSubscriptionHandler();
@@ -68,7 +91,7 @@ public class ConfigServiceTest {
         service.setEventSetSubscriptionHandler(new EventSet.EventReceiver(){
             @Override
             public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
-                if(event instanceof RawDataEvent){
+                if(event instanceof ResultEvent){
                     synchronized (syncObject){
                         syncObject.notify();
                     }
@@ -78,7 +101,7 @@ public class ConfigServiceTest {
 
         // send a bezirk message here
         Bezirk realBezirk = BezirkMiddleware.registerZirk("UnitTestZirk");
-        final RawDataEvent dummyEvent = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
+        final ResultEvent dummyEvent = new ResultEvent();
         realBezirk.sendEvent(dummyEvent);
 
         // wait for callback function
@@ -86,16 +109,7 @@ public class ConfigServiceTest {
             syncObject.wait();
         }
 
-        // resume the original eventSet.receiver
-        service.setEventSetSubscriptionHandler(old);
-        realBezirk.sendEvent(dummyEvent);
-
         // unregister testing zirk
         realBezirk.unregisterZirk();
-
-        // terminate child services
-        service.stopChildrenService();
-
-        BezirkMiddleware.stop();
     }
 }
