@@ -47,6 +47,7 @@ public class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
     // if there is anything new it will send a raw data event or it should print out no new tweets
     // in the console
     private void pullTweetsSinceLastID(){
+
         TwitterDAO dao = new TwitterDAO(mContext);
         long lastID = dao.loadLastTweetID();
 
@@ -68,12 +69,11 @@ public class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
                 for(twitter4j.Status status: statuses){
                     set.add(status.getId());
                     event.appendRawData(Utils.packTweetToRawDataFormat(status));
-                    event.hasText = true;
-                    event.hasLocation = true;
-
-                    Log.i(TAG, event.toString());
-                    mBezirk.sendEvent(event);
                 }
+
+                event.hasText = true;
+                event.hasLocation = true;
+                mBezirk.sendEvent(event);
 
                 long last = Collections.max(set);
                 dao.saveLastTweetID(last);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
@@ -74,7 +75,7 @@ public class TwitterService extends Service {
     public void onCreate(){
 
         // init the handler
-        mHandler = new Handler();
+        mHandler = new Handler(Looper.getMainLooper());
 
         // init twitter api
         initTwitterInterface();
@@ -207,7 +208,6 @@ public class TwitterService extends Service {
     public void sendTwitterEventNotification(Status status){
         final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.STREAMING);
         event.appendRawData(Utils.packTweetToRawDataFormat(status));
-        Log.i(TAG, event.toString());
         bezirk.sendEvent(event);
     }
 

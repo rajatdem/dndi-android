@@ -69,7 +69,6 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
             event.hasText = true;
             event.hasLocation = true;
 
-            Log.i(TAG, event.toString());
             mBezirk.sendEvent(event);
         }
         return null;
