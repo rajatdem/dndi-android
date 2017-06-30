@@ -16,6 +16,9 @@ android {
         buildConfigField("String", "TWITTER_API_SECRET", TWITTER_API_SECRET)
         buildConfigField("String", "FACEBOOK_API_KEY", FACEBOOK_API_KEY)
         buildConfigField("String", "GOOGLE_PLACE_API_KEY", GOOGLE_PLACE_API_KEY)
+
+        // Enabling multidex support.
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -75,6 +78,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-places:11.0.1'
     compile 'com.google.android.gms:play-services-location:11.0.1'
     compile 'com.google.android.gms:play-services-maps:11.0.1'
+
+    compile 'com.android.support:multidex:1.0.0'
 }
 
 // add the Bezirk repository
