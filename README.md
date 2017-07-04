@@ -17,7 +17,7 @@ middleware for inter-process communication
 11. Remove branches once they are successfully merged to the master/develop branch.
 
 
-## Coding style and code review checkboxes
+## Coding style guidelines
 
 
 - Exception handling
@@ -41,3 +41,22 @@ describing what the class or method does. This sentence should start with a thir
 - Use `StringBuilder` over operator `+`
 - More details on [Android Coding Style](https://source.android.com/source/code-style)
 
+
+## Code review and pull request
+
+### Pull Request
+
+1. Create a branch (rebased with the target branch) and include changes there
+2. Add valid descriptions for the changes you made
+3. Send the review request to other team members
+
+### Code Review
+
+1. Check the commits messages in the pull request. No meaningless commit messages or violation of message format
+2. Check the descrition is valid
+3. Pull the code from Github, build it, and run it on the device. The build must be completed.
+4. Check the test cases and the coverage.
+5. Leave valid comments on the Github.
+6. When you finish the code review, leave "reviewed" on the Github
+7. Remove merged branch
+8. No pull requests should be left for more than three days
