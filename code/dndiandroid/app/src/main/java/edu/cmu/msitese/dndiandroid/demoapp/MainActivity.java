@@ -9,7 +9,7 @@ import android.widget.Toast;
 import java.util.List;
 
 //import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
-import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDAO;
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFrameworkListener;
 
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void onClickClearPreference(View view){
-        TwitterDAO dao = new TwitterDAO(this);
+        TwitterDao dao = new TwitterDao(this);
         dao.clearTwitterCredential();
     }
 

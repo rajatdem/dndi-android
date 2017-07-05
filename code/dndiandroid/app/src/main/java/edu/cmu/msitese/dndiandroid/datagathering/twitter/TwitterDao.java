@@ -9,13 +9,13 @@ import edu.cmu.msitese.dndiandroid.R;
  * Created by Yu-Lun Tsai on 08/06/2017.
  */
 
-public class TwitterDAO {
+public class TwitterDao {
 
     private static final String TAG = "ZIRK";
 
     private Context mContext;
 
-    public TwitterDAO(Context context){
+    public TwitterDao(Context context){
         mContext = context;
     }
 
@@ -65,7 +65,7 @@ public class TwitterDAO {
     }
 
     // load the last tweet ID
-    public long loadLastTweetID(){
+    public long loadLastTweetId(){
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE);

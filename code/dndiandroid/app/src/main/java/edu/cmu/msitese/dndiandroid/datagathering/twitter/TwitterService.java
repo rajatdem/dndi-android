@@ -153,7 +153,7 @@ public class TwitterService extends Service {
     // load twitter user access token from sharedPreference
     private boolean loadTwitterAccessToken(){
 
-        TwitterDAO dao = new TwitterDAO(this);
+        TwitterDao dao = new TwitterDao(this);
 
         TwitterCredential credential = dao.getTwitterCredential();
         String token = credential.token;
@@ -173,7 +173,7 @@ public class TwitterService extends Service {
     private boolean configTwitterAccessToken(String jsonStr){
 
         TwitterCredential credential = Utils.getTwitterCredentialFromJSONRaw(jsonStr);
-        TwitterDAO dao = new TwitterDAO(this);
+        TwitterDao dao = new TwitterDao(this);
         dao.saveTwitterCredential(credential.token, credential.secret, credential.screenName);
 
         mScreenName = credential.screenName;

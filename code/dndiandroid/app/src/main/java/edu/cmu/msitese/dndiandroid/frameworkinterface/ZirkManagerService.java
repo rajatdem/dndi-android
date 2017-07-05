@@ -23,10 +23,10 @@ import edu.cmu.msitese.dndiandroid.event.ResultEvent;
  * Created by Yu-Lun Tsai on 07/06/2017.
  */
 
-public class ConfigService extends Service {
+public class ZirkManagerService extends Service {
 
     private static final String TAG = "ZIRK";
-    public static final String ACTION = "edu.cmu.msitese.dndiandroid.ConfigService";
+    public static final String ACTION = "edu.cmu.msitese.dndiandroid.ZirkManagerService";
 
     private Bezirk bezirk;
     private final EventSet eventSet = new EventSet(
@@ -87,8 +87,8 @@ public class ConfigService extends Service {
 
     public class ConfigServiceBinder extends Binder {
         @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
-       public ConfigService getService() {
-            return ConfigService.this;
+       public ZirkManagerService getService() {
+            return ZirkManagerService.this;
         }
     }
 
