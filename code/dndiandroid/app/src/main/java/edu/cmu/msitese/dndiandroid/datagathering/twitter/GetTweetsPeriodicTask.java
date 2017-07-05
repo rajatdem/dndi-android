@@ -44,8 +44,8 @@ class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
             pullTweetsSinceLastId();
         }
         catch (TwitterException ex){
-//            final ExceptionEvent event = new ExceptionEvent(this.getClass().getName(), ex);
-//            mBezirk.sendEvent(event);
+            final ExceptionEvent event = new ExceptionEvent(this.getClass().getName(), ex);
+            mBezirk.sendEvent(event);
         }
         return null;
     }
