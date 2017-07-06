@@ -55,7 +55,7 @@ public class TwitterDao {
     }
 
     // save the last tweet ID so that the periodic mode won't send out duplicate data
-    public void saveLastTweetID(long id){
+    public void saveLastTweetId(long id){
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE);
@@ -74,5 +74,15 @@ public class TwitterDao {
         if(res.equals(""))
             return -1;
         return Long.parseLong(res);
+    }
+
+    // clear twitter access token in the sharedPreference (for demo purpose only)
+    public void clearLastTweetIdRecord(){
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                mContext.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove(mContext.getString(R.string.twitter_last_tweet_id));
+        editor.apply();
     }
 }

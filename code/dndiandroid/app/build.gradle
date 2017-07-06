@@ -14,6 +14,11 @@ android {
 
         buildConfigField("String", "TWITTER_API_KEY", TWITTER_API_KEY)
         buildConfigField("String", "TWITTER_API_SECRET", TWITTER_API_SECRET)
+        buildConfigField("String", "TWITTER_ACCESS_TOKEN", TWITTER_ACCESS_TOKEN)
+        buildConfigField("String", "TWITTER_ACCESS_SECRET", TWITTER_ACCESS_SECRET)
+        buildConfigField("String", "TWITTER_USER_ID", TWITTER_USER_ID)
+
+
         buildConfigField("String", "FACEBOOK_API_KEY", FACEBOOK_API_KEY)
         buildConfigField("String", "GOOGLE_PLACE_API_KEY", GOOGLE_PLACE_API_KEY)
 

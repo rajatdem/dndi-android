@@ -81,7 +81,14 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
             try {
                 int size = statuses.size();
                 Paging page = new Paging(start++, 100);
-                statuses.addAll(mTwitter.getUserTimeline(mScreenName, page));
+                List<twitter4j.Status> res = mTwitter.getUserTimeline(mScreenName, page);
+
+                // it can be null when unit test uses mocks
+                if(res == null){
+                    break;
+                }
+
+                statuses.addAll(res);
                 if (statuses.size() == size){
                     break;
                 }
@@ -104,10 +111,19 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
         int tweetsPerPage = (nextPageNum == totalPageNum) ? ((remain == 0) ? 100 : remain): 100;
 
         while(true) {
+
             try {
                 int size = statuses.size();
                 Paging page = new Paging(nextPageNum, tweetsPerPage);
-                statuses.addAll(mTwitter.getUserTimeline(mScreenName, page));
+                List<twitter4j.Status> res = mTwitter.getUserTimeline(mScreenName, page);
+
+                // it can be null when unit test uses mocks
+                if(res == null){
+                    break;
+                }
+
+                // append data to the end of RawDataEvent
+                statuses.addAll(res);
                 if (statuses.size() == size || statuses.size() >= num){
                     break;
                 }

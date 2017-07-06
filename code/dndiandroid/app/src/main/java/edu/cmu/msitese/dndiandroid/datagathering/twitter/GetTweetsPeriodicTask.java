@@ -71,8 +71,14 @@ class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
         if(lastId != -1){
             page.setSinceId(lastId);
         }
-
         statuses = mTwitter.getUserTimeline(mScreenName, page);
+
+        // it can be null when unit test uses mocks
+        if(statuses == null){
+            return;
+        }
+
+        // add raw data to RawDataEvent
         if (!statuses.isEmpty()) {
 
             final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.PERIODIC);
@@ -88,7 +94,7 @@ class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
 
             // Update the last tweet id
             lastId = Collections.max(set);
-            dao.saveLastTweetID(lastId);
+            dao.saveLastTweetId(lastId);
 
         } else {
             Log.i(TAG, this.getClass().getName() +
