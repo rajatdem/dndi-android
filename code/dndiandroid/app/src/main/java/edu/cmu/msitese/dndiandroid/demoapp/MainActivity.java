@@ -10,7 +10,7 @@ import java.util.List;
 
 //import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
-import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordCountDAO;
+import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordCountDao;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFrameworkListener;
 
@@ -102,12 +102,12 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
         TwitterDao twitterDao = new TwitterDao(this);
         twitterDao.clearTwitterCredential();
 
-        KeywordCountDAO keywordCountDAO = new KeywordCountDAO(this);
-        keywordCountDAO.clearTable();
+        KeywordCountDao keywordCountDao = new KeywordCountDao(this);
+        keywordCountDao.clearTable();
     }
 
     public void onClickDebugInferredResult(View view){
-        KeywordCountDAO dao = new KeywordCountDAO(this);
+        KeywordCountDao dao = new KeywordCountDao(this);
         dao.printContentToConsole();
     }
 

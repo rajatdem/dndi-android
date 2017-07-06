@@ -41,7 +41,7 @@ public class ZirkManagerServiceTest extends ServiceTestCase<ZirkManagerService> 
     @Test
     public void testWithBoundService() throws TimeoutException {
         IBinder binder = bindService(new Intent(getContext(), ZirkManagerService.class));
-        ZirkManagerService service = ((ZirkManagerService.ConfigServiceBinder) binder).getService();
+        ZirkManagerService service = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
     }
 
     @Test
@@ -51,13 +51,13 @@ public class ZirkManagerServiceTest extends ServiceTestCase<ZirkManagerService> 
     }
 
     @Test(timeout=10000)
-    public void testSendBezirkEventDoesCallBezirkDotSend() throws Exception {
+    public void testSendBezirkEventDoesCallBezirkSend() throws Exception {
 
         // Bind the service and grab a reference to the binder.
         IBinder binder = bindService(new Intent(getContext(), ZirkManagerService.class));
 
         // Get the service handle
-        ZirkManagerService service = ((ZirkManagerService.ConfigServiceBinder) binder).getService();
+        ZirkManagerService service = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
         assertNotNull(service);
 
         // create mock objects
@@ -81,7 +81,7 @@ public class ZirkManagerServiceTest extends ServiceTestCase<ZirkManagerService> 
         IBinder binder = bindService(new Intent(getContext(), ZirkManagerService.class));
 
         // Get the service handle
-        ZirkManagerService service = ((ZirkManagerService.ConfigServiceBinder) binder).getService();
+        ZirkManagerService service = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
         assertNotNull(service);
 
         final Object syncObject = new Object();
@@ -108,6 +108,7 @@ public class ZirkManagerServiceTest extends ServiceTestCase<ZirkManagerService> 
         synchronized (syncObject){
             syncObject.wait();
         }
+        service.setEventSetSubscriptionHandler(old);
 
         // unregister testing zirk
         realBezirk.unregisterZirk();

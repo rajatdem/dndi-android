@@ -34,7 +34,7 @@ public class ZirkManagerService extends Service {
             ResultEvent.class
     );
 
-    private final IBinder mBinder = new ConfigServiceBinder();
+    private final IBinder mBinder = new ZirkManagerServiceBinder();
     private final Class<?> [] services = {
             TwitterService.class,
             KeywordMatchService.class,
@@ -88,7 +88,7 @@ public class ZirkManagerService extends Service {
         bezirk.sendEvent(evt);
     }
 
-    public class ConfigServiceBinder extends Binder {
+    public class ZirkManagerServiceBinder extends Binder {
         @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
        public ZirkManagerService getService() {
             return ZirkManagerService.this;

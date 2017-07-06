@@ -13,7 +13,7 @@ import java.util.List;
  * Created by Yu-Lun Tsai on 28/06/2017.
  */
 
-public class KeywordCountDAO {
+public class KeywordCountDao {
 
     private static final String TAG = "ZIRK";
 
@@ -26,7 +26,7 @@ public class KeywordCountDAO {
             KeywordDBHelper.KEYWORD_CATEGORY,
             KeywordDBHelper.KEYWORD_COUNT,};
 
-    public KeywordCountDAO(Context context){
+    public KeywordCountDao(Context context){
         dbHelper = KeywordDBHelper.getInstance(context);
     }
 

@@ -13,7 +13,6 @@ import com.bezirk.middleware.android.BezirkMiddleware;
 import com.bezirk.middleware.messages.Event;
 import com.bezirk.middleware.messages.EventSet;
 
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,7 @@ public class KeywordMatchService extends Service {
     );
 
     private Map<String,String> mKeywordMap;
-    private KeywordCountDAO mKeywordCountDAO;
+    private KeywordCountDao mKeywordCountDao;
 
     @Override
     public void onCreate(){
@@ -46,7 +45,7 @@ public class KeywordMatchService extends Service {
         mKeywordMap = dao.loadKeywords();
 
         // instantiate the keyword dao
-        mKeywordCountDAO = new KeywordCountDAO(this);
+        mKeywordCountDao = new KeywordCountDao(this);
 
         // register itself to the Bezirk middleware
         bezirk = BezirkMiddleware.registerZirk("KeywordZirk");
@@ -113,7 +112,7 @@ public class KeywordMatchService extends Service {
         @Override
         protected Void doInBackground(Keyword... keywords) {
             for (Keyword keyword : keywords) {
-                mKeywordCountDAO.addOrUpdateKeywordCount(keyword.keyword, keyword.category);
+                mKeywordCountDao.addOrUpdateKeywordCount(keyword.keyword, keyword.category);
             }
             return null;
         }
