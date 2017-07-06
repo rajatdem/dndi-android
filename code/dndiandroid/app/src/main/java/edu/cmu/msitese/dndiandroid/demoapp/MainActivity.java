@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void onClickPull(View view){
-        dndi.pullDataInBatch();
+        dndi.pullDataInBatchAll();
     }
 
     public void onClickPeriodic(View view){

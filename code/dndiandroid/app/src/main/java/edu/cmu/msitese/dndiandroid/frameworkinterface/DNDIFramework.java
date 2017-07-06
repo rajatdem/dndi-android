@@ -41,7 +41,7 @@ public class DNDIFramework {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
-            mZirkManagerService = ((ZirkManagerService.ConfigServiceBinder) binder).getService();
+            mZirkManagerService = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
             isBound = true;
         }
 
@@ -98,9 +98,16 @@ public class DNDIFramework {
         return isBound;
     }
 
-    public void pullDataInBatch(){
+    public void pullDataInBatchAll(){
         if (isBound) {
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PULL);
+            mZirkManagerService.sendBezirkEvent(evt);
+        }
+    }
+
+    public void pullDataInBatchByNum(int num){
+        if (isBound) {
+            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PULL, Integer.toString(num));
             mZirkManagerService.sendBezirkEvent(evt);
         }
     }
