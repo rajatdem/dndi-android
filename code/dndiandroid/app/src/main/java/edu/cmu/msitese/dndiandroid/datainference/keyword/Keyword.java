@@ -4,7 +4,7 @@ package edu.cmu.msitese.dndiandroid.datainference.keyword;
  * Created by Yu-Lun Tsai on 29/06/2017.
  */
 
-public class Keyword {
+class Keyword {
 
     public String keyword;
     public String category;
