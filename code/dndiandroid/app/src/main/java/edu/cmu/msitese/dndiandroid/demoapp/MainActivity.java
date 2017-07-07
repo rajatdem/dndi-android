@@ -17,7 +17,10 @@ import java.util.List;
 //import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.R;
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDAO;
 import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordCountDao;
+//import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDAO;
+import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFrameworkListener;
 
@@ -42,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     @Override
-<<<<<<< HEAD
     protected void onResume(){
         super.onResume();
         dndi.resume();
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     protected void onDestroy(){
         dndi.stop();
         super.onDestroy();
-   }
+    }
 
     @Override
     public void onKeywordMatch(List<String> keywords) {
@@ -150,12 +152,11 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void onClickGPS(View view){
-        //TODO: GET the GPS Coordinates.
-//        startService(new Intent(getBaseContext(), LocationDataService.class));
+        startService(new Intent(getBaseContext(), LocationDataService.class));
     }
 
     // Method to stop the service
     public void stopServiceGPS(View view) {
-//        stopService(new Intent(getBaseContext(), LocationDataService.class));
+        stopService(new Intent(getBaseContext(), LocationDataService.class));
     }
 }

@@ -1,7 +1,5 @@
 package edu.cmu.msitese.dndiandroid.frameworkinterface;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
