@@ -10,6 +10,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -61,7 +62,9 @@ public class DNDIFramework {
             switch (result){
                 case KEYWORD_MATCH:
                     ArrayList<String> keywords = intent.getStringArrayListExtra("keywords");
-                    ((DNDIFrameworkListener) mContext).onKeywordMatch(keywords);
+                    if(mContext instanceof DNDIFrameworkListener){
+                        ((DNDIFrameworkListener) mContext).onKeywordMatch(keywords);
+                    }
                     break;
                 case ERROR:
                     break;
@@ -90,6 +93,7 @@ public class DNDIFramework {
     public void stop(){
         if(isBound){
             mContext.unbindService(mServerConn);
+            isBound = false;
         }
     }
 
@@ -139,11 +143,11 @@ public class DNDIFramework {
     private void bindToConfigService(){
 
         if(isServiceRunning(ZirkManagerService.class)){
-            mContext.bindService(new Intent(mContext, ZirkManagerService.class), mServerConn, Context.BIND_AUTO_CREATE);
+            mContext.bindService(new Intent(mContext, ZirkManagerService.class), mServerConn, Context.BIND_NOT_FOREGROUND);
         }
         else{
             mContext.startService(new Intent(mContext, ZirkManagerService.class));
-            mContext.bindService(new Intent(mContext, ZirkManagerService.class), mServerConn, Context.BIND_AUTO_CREATE);
+            mContext.bindService(new Intent(mContext, ZirkManagerService.class), mServerConn, Context.BIND_NOT_FOREGROUND);
         }
     }
 
@@ -156,18 +160,5 @@ public class DNDIFramework {
             }
         }
         return false;
-    }
-
-    // constructor exposed for testing purpose only
-    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-    public DNDIFramework(Context context, ServiceConnection conn){
-        this.mContext = context;
-        if(isServiceRunning(ZirkManagerService.class)){
-            mContext.bindService(new Intent(mContext, ZirkManagerService.class), conn, Context.BIND_AUTO_CREATE);
-        }
-        else{
-            mContext.startService(new Intent(mContext, ZirkManagerService.class));
-            mContext.bindService(new Intent(mContext, ZirkManagerService.class), conn, Context.BIND_AUTO_CREATE);
-        }
     }
 }
