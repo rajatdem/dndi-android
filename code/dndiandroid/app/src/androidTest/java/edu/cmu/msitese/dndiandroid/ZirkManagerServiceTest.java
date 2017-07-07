@@ -33,21 +33,16 @@ public class ZirkManagerServiceTest extends ServiceTestCase<ZirkManagerService> 
         super(ZirkManagerService.class);
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
     @Test
     public void testWithBoundService() throws TimeoutException {
         IBinder binder = bindService(new Intent(getContext(), ZirkManagerService.class));
         ZirkManagerService service = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
+        assertNotNull(service);
     }
 
     @Test
     public void testWithStartedService() throws TimeoutException {
         startService(new Intent(getContext(), ZirkManagerService.class));
-        //do nothing
     }
 
     @Test(timeout=10000)
@@ -69,7 +64,7 @@ public class ZirkManagerServiceTest extends ServiceTestCase<ZirkManagerService> 
         Bezirk spyBezirk = spy(mockBezirk);
         service.setBezirkInstance(spyBezirk);
 
-        // config.sendBezirkEvent should definitely call bezirk.sendEvent
+        // sendBezirkEvent should definitely call bezirk.sendEvent
         service.sendBezirkEvent(mockEvent);
         verify(spyBezirk, times(1)).sendEvent(mockEvent);
     }

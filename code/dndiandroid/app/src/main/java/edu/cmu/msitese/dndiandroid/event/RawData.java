@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 
 public class RawData implements Serializable {
+
     private String date;
     private String text;
     private String location;
@@ -28,7 +29,6 @@ public class RawData implements Serializable {
     }
 
     public String getDate() {
-
         return date;
     }
 
