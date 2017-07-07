@@ -23,16 +23,16 @@ class KeywordFileLoader {
 
     private static final String TAG = "ZIRK";
 
-    private Context context;
+    private Context mContext;
 
     KeywordFileLoader(Context context){
-        this.context = context;
+        mContext = context;
     }
 
     Map<String,String> loadKeywords(){
 
         // get data from text resource file containing JSON data.
-        InputStream inputStream = context.getResources().openRawResource(R.raw.keywords);
+        InputStream inputStream = mContext.getResources().openRawResource(R.raw.keywords);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
         // manually check whether reach the end of input byte stream

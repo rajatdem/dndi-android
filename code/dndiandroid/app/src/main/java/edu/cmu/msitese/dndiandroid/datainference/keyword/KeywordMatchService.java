@@ -3,8 +3,10 @@ package edu.cmu.msitese.dndiandroid.datainference.keyword;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.bezirk.middleware.Bezirk;
@@ -34,8 +36,12 @@ public class KeywordMatchService extends Service {
             RawDataEvent.class
     );
 
+    // key: keywords, value: categories
     private Map<String,String> mKeywordMap;
     private KeywordCountDao mKeywordCountDao;
+
+    // used only for testing
+    private final IBinder mBinder = new KeywordMatchServiceBinder();
 
     @Override
     public void onCreate(){
@@ -74,7 +80,7 @@ public class KeywordMatchService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
     // given a list of RawData objects, check whether there is keywords in the text
@@ -115,6 +121,49 @@ public class KeywordMatchService extends Service {
                 mKeywordCountDao.addOrUpdateKeywordCount(keyword.keyword, keyword.category);
             }
             return null;
+        }
+    }
+
+    // For testing purpose only
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public class KeywordMatchServiceBinder extends Binder {
+        public KeywordMatchService getService() {
+            return KeywordMatchService.this;
+        }
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public void setKeywordCountDaoInstance(KeywordCountDao dao){
+        mKeywordCountDao = dao;
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public KeywordCountDao getKeywordCountDaoInstance(){
+        return mKeywordCountDao;
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public void insertKeywordCategoryPair(String keyword, String category){
+        mKeywordMap.put(keyword, category);
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public String getKeywordCategory(String keyword){
+        if(mKeywordMap.containsKey(keyword)){
+            return mKeywordMap.get(keyword);
+        }
+        return null;
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public void resumeKeywordCategoryPair(String keyword, String category){
+        if(category == null){
+            if(mKeywordMap.containsKey(keyword)){
+                mKeywordMap.remove(keyword);
+            }
+        }
+        else{
+            mKeywordMap.put(keyword, category);
         }
     }
 }
