@@ -78,6 +78,7 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
     private int pullTweetsByPageRange(int start, int end){
 
         while(start <= end) {
+
             try {
                 int size = statuses.size();
                 Paging page = new Paging(start++, 100);
@@ -95,6 +96,7 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
             }
             catch(TwitterException e) {
                 Log.e(TAG, e.toString());
+                break;
             }
         }
         return start;
