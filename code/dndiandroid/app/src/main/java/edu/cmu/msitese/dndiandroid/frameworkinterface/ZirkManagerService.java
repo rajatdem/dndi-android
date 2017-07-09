@@ -15,8 +15,10 @@ import com.bezirk.middleware.android.BezirkMiddleware;
 import com.bezirk.middleware.messages.Event;
 import com.bezirk.middleware.messages.EventSet;
 
+import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
 import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordMatchService;
+import edu.cmu.msitese.dndiandroid.datanormalization.location.GeocodingService;
 import edu.cmu.msitese.dndiandroid.event.ResultEvent;
 
 
@@ -37,6 +39,8 @@ public class ZirkManagerService extends Service {
     private final IBinder mBinder = new ZirkManagerServiceBinder();
     private final Class<?> [] services = {
             TwitterService.class,
+            LocationDataService.class,
+            GeocodingService.class
             KeywordMatchService.class,
     };
 
@@ -93,6 +97,11 @@ public class ZirkManagerService extends Service {
        public ZirkManagerService getService() {
             return ZirkManagerService.this;
         }
+    }
+
+    public void stopGPSService() {
+        Log.i(TAG, "Stopping GPS services!!!");
+        stopService(new Intent(getBaseContext(), LocationDataService.class));
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)

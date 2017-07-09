@@ -102,15 +102,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.50"
-                android:text="BTN4" />
+                android:onClick="eventGPS"
+                android:text="Event GPS" />
 
             <Button
                 android:id="@+id/btn5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.50"
-                android:onClick="onClickGPS"
-                android:text="Start GPS" />
+                android:onClick="periodicGPS"
+                android:text="Periodic GPS" />
 
             <Button
                 android:id="@+id/btn6"

@@ -15,6 +15,7 @@ import android.util.Log;
 import org.json.JSONObject;
 
 import edu.cmu.msitese.dndiandroid.Utils;
+import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.event.CommandEvent;
 
 import java.util.ArrayList;
@@ -126,6 +127,20 @@ public class DNDIFramework {
         if (isBound) {
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PERIODIC, Integer.toString(period));
             mZirkManagerService.sendBezirkEvent(evt);
+        }
+    }
+
+    public void periodicGPS(int period){
+        if (isBound) {
+            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PERIODIC, Integer.toString(period));
+            mConfigService.sendBezirkEvent(evt);
+        }
+    }
+
+    public void eventGPS(int shortestDist){
+        if (isBound) {
+            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_EVENT, Integer.toString(shortestDist));
+            mConfigService.sendBezirkEvent(evt);
         }
     }
 

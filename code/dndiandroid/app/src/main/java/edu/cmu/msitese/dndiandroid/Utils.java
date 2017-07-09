@@ -1,5 +1,6 @@
 package edu.cmu.msitese.dndiandroid;
 
+import android.location.Location;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -16,6 +17,8 @@ import twitter4j.Status;
 public class Utils {
 
     private static final String TAG = "UTILS";
+
+    public enum MODE{BATCH, PERIODIC, EVENT}
 
     public static JSONObject packCredentialToJSON(String token, String secret, String name){
 
@@ -56,5 +59,25 @@ public class Utils {
         rawData.setText(status.getText());
         rawData.setDate(Long.toString(status.getCreatedAt().getTime()));
         return rawData;
+    }
+
+    public static Location getLocationStringFromJSONRaw(String raw){
+
+        JSONObject object;
+        Location mLocation = null;
+
+        try{
+            object = new JSONObject(raw);
+            if(!(object.has("latitude") && object.has("longitude"))){
+                return mLocation;
+            } else {
+                mLocation = new Location("");
+                mLocation.setLatitude(Double.parseDouble(object.getString("latitude")));
+                mLocation.setLongitude(Double.parseDouble(object.getString("longitude")));
+            }
+        } catch (Exception e){
+            Log.w(TAG, e.toString());
+        }
+        return mLocation;
     }
 }

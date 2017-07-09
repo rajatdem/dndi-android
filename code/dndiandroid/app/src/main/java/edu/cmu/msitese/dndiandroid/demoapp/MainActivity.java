@@ -151,12 +151,40 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
         dao.printContentToConsole();
     }
 
-    public void onClickGPS(View view){
-        startService(new Intent(getBaseContext(), LocationDataService.class));
+    public void periodicGPS(View view){
+        int num;
+        try{
+            num = Integer.valueOf(mEditTestInput.getText().toString());
+            if(num < 1000 || num > 7200000){
+                //period must be more than 1sec and less than 2hrs
+                throw new NumberFormatException();
+            }
+        }
+        catch (NumberFormatException ex){
+            // if the string is invalid, assign a default value of 30sec
+            num = 30000;
+        }
+        dndi.periodicGPS(num);
+    }
+
+    public void eventGPS(View view){
+        int num;
+        try{
+            num = Integer.valueOf(mEditTestInput.getText().toString());
+            if(num < 10 || num > 5000){
+                //period must be more than 10m and less than 5km
+                throw new NumberFormatException();
+            }
+        }
+        catch (NumberFormatException ex){
+            // if the string is invalid, assign a default value of 0.5mile
+            num = 800;
+        }
+        dndi.eventGPS(num);
     }
 
     // Method to stop the service
     public void stopServiceGPS(View view) {
-        stopService(new Intent(getBaseContext(), LocationDataService.class));
+        dndi.stopGPSService();
     }
 }
