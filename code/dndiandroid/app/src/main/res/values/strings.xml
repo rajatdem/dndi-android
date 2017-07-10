@@ -6,4 +6,8 @@
     <string name="twitter_access_secret">TWITTER_ACCESS_SECRET</string>
     <string name="twitter_screen_name">TWITTER_SCREEN_NAME</string>
     <string name="twitter_last_tweet_id">TWITTER_TWEET_ID</string>
+    <string name="address_found">Address Found</string>
+    <string name="service_not_available">Service Not Available</string>
+    <string name="no_address_found">Address Not Found</string>
+    <string name="invalid_lat_long_used">Invalid Coordinates</string>
 </resources>
