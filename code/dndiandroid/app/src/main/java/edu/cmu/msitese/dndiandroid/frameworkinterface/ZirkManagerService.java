@@ -16,6 +16,7 @@ import com.bezirk.middleware.messages.Event;
 import com.bezirk.middleware.messages.EventSet;
 
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
+import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordMatchService;
 import edu.cmu.msitese.dndiandroid.event.ResultEvent;
 
 
@@ -23,19 +24,20 @@ import edu.cmu.msitese.dndiandroid.event.ResultEvent;
  * Created by Yu-Lun Tsai on 07/06/2017.
  */
 
-public class ConfigService extends Service {
+public class ZirkManagerService extends Service {
 
     private static final String TAG = "ZIRK";
-    public static final String ACTION = "edu.cmu.msitese.dndiandroid.ConfigService";
+    public static final String ACTION = "edu.cmu.msitese.dndiandroid.ZirkManagerService";
 
     private Bezirk bezirk;
     private final EventSet eventSet = new EventSet(
             ResultEvent.class
     );
 
-    private final IBinder mBinder = new ConfigServiceBinder();
+    private final IBinder mBinder = new ZirkManagerServiceBinder();
     private final Class<?> [] services = {
             TwitterService.class,
+            KeywordMatchService.class,
     };
 
     /** Called when the service is being created. */
@@ -48,6 +50,7 @@ public class ConfigService extends Service {
         // register with Bezirk middleware to get an instance of Bezirk API.
         bezirk = BezirkMiddleware.registerZirk("ConfigZirk");
 
+        // config event receive callbacks
         eventSet.setEventReceiver(new EventSet.EventReceiver() {
 
             @Override
@@ -85,10 +88,10 @@ public class ConfigService extends Service {
         bezirk.sendEvent(evt);
     }
 
-    public class ConfigServiceBinder extends Binder {
+    public class ZirkManagerServiceBinder extends Binder {
         @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
-       public ConfigService getService() {
-            return ConfigService.this;
+       public ZirkManagerService getService() {
+            return ZirkManagerService.this;
         }
     }
 

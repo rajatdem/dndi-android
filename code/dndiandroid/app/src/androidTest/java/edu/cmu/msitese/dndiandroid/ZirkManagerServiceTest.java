@@ -15,7 +15,7 @@ import org.junit.Test;
 import java.util.concurrent.TimeoutException;
 
 import edu.cmu.msitese.dndiandroid.event.ResultEvent;
-import edu.cmu.msitese.dndiandroid.frameworkinterface.ConfigService;
+import edu.cmu.msitese.dndiandroid.frameworkinterface.ZirkManagerService;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -27,37 +27,32 @@ import static org.mockito.Mockito.verify;
  * Created by Yu-Lun Tsai on 14/06/2017.
  */
 
-public class ConfigServiceTest extends ServiceTestCase<ConfigService> {
+public class ZirkManagerServiceTest extends ServiceTestCase<ZirkManagerService> {
 
-    public ConfigServiceTest() {
-        super(ConfigService.class);
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    public ZirkManagerServiceTest() {
+        super(ZirkManagerService.class);
     }
 
     @Test
     public void testWithBoundService() throws TimeoutException {
-        IBinder binder = bindService(new Intent(getContext(), ConfigService.class));
-        ConfigService service = ((ConfigService.ConfigServiceBinder) binder).getService();
+        IBinder binder = bindService(new Intent(getContext(), ZirkManagerService.class));
+        ZirkManagerService service = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
+        assertNotNull(service);
     }
 
     @Test
     public void testWithStartedService() throws TimeoutException {
-        startService(new Intent(getContext(), ConfigService.class));
-        //do nothing
+        startService(new Intent(getContext(), ZirkManagerService.class));
     }
 
     @Test(timeout=10000)
-    public void testSendBezirkEventDoesCallBezirkDotSend() throws Exception {
+    public void testSendBezirkEventDoesCallBezirkSend() throws Exception {
 
         // Bind the service and grab a reference to the binder.
-        IBinder binder = bindService(new Intent(getContext(), ConfigService.class));
+        IBinder binder = bindService(new Intent(getContext(), ZirkManagerService.class));
 
         // Get the service handle
-        ConfigService service = ((ConfigService.ConfigServiceBinder) binder).getService();
+        ZirkManagerService service = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
         assertNotNull(service);
 
         // create mock objects
@@ -69,7 +64,7 @@ public class ConfigServiceTest extends ServiceTestCase<ConfigService> {
         Bezirk spyBezirk = spy(mockBezirk);
         service.setBezirkInstance(spyBezirk);
 
-        // config.sendBezirkEvent should definitely call bezirk.sendEvent
+        // sendBezirkEvent should definitely call bezirk.sendEvent
         service.sendBezirkEvent(mockEvent);
         verify(spyBezirk, times(1)).sendEvent(mockEvent);
     }
@@ -78,10 +73,10 @@ public class ConfigServiceTest extends ServiceTestCase<ConfigService> {
     public void testWhetherEventReceiverIsCalledWhenSendAnEvent() throws Exception {
 
         // Bind the service and grab a reference to the binder.
-        IBinder binder = bindService(new Intent(getContext(), ConfigService.class));
+        IBinder binder = bindService(new Intent(getContext(), ZirkManagerService.class));
 
         // Get the service handle
-        ConfigService service = ((ConfigService.ConfigServiceBinder) binder).getService();
+        ZirkManagerService service = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
         assertNotNull(service);
 
         final Object syncObject = new Object();
@@ -108,6 +103,7 @@ public class ConfigServiceTest extends ServiceTestCase<ConfigService> {
         synchronized (syncObject){
             syncObject.wait();
         }
+        service.setEventSetSubscriptionHandler(old);
 
         // unregister testing zirk
         realBezirk.unregisterZirk();

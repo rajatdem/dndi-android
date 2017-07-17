@@ -20,8 +20,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name="edu.cmu.msitese.dndiandroid.frameworkinterface.ConfigService" android:stopWithTask="true"/>
+        <service android:name="edu.cmu.msitese.dndiandroid.frameworkinterface.ZirkManagerService" android:stopWithTask="true"/>
         <service android:name="edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService" android:stopWithTask="true"/>
+        <service android:name="edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordMatchService" android:stopWithTask="true"/>
         <!--<service android:name="edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService" android:stopWithTask="true"/>-->
 
         <receiver android:name="com.bezirk.middleware.android.ZirkMessageReceiver">

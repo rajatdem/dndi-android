@@ -4,12 +4,33 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.test.ServiceTestCase;
 
+import com.bezirk.middleware.Bezirk;
+import com.bezirk.middleware.addressing.ZirkEndPoint;
 import com.bezirk.middleware.android.BezirkMiddleware;
+import com.bezirk.middleware.messages.Event;
+import com.bezirk.middleware.messages.EventSet;
 
+import org.json.JSONObject;
 import org.junit.Test;
 
-import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
+import java.util.Date;
+import java.util.concurrent.TimeoutException;
 
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
+import edu.cmu.msitese.dndiandroid.event.CommandEvent;
+import twitter4j.Paging;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Yu-Lun Tsai on 14/06/2017.
@@ -21,13 +42,8 @@ public class TwitterServiceTest extends ServiceTestCase<TwitterService> {
         super(TwitterService.class);
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @Test(timeout = 10000)
-    public void testWithBoundService() throws Exception {
+    @Test(timeout = 30000)
+    public void testTwitterModeSelectionAndOperation() throws TimeoutException, InterruptedException, TwitterException {
 
         // initialize the Bezirk service for testing
         BezirkMiddleware.initialize(getContext());
@@ -43,6 +59,185 @@ public class TwitterServiceTest extends ServiceTestCase<TwitterService> {
         // The default operation mode should be batch
         TwitterService.Mode mode = service.getCurrentMode();
         assertTrue(mode == TwitterService.Mode.PULL);
+
+        // send a bezirk message here
+        Bezirk bezirk = BezirkMiddleware.registerZirk("TestZirk");
+
+        JSONObject jsonObject = Utils.packCredentialToJSON(
+                BuildConfig.TWITTER_ACCESS_TOKEN,
+                BuildConfig.TWITTER_ACCESS_SECRET,
+                BuildConfig.TWITTER_USER_ID);
+        final CommandEvent event1 = new CommandEvent(
+                CommandEvent.CmdType.CMD_CONFIG_API_KEY,
+                jsonObject.toString());
+        bezirk.sendEvent(event1);
+
+        // assert api key is successfully saved
+        Thread.sleep(2000);
+        assertTrue(service.getTokenLoaded());
+
+        // assert mode change is successful
+        final CommandEvent event2 = new CommandEvent(CommandEvent.CmdType.CMD_EVENT);
+        bezirk.sendEvent(event2);
+        Thread.sleep(2000);
+        assertTrue(service.getCurrentMode() == TwitterService.Mode.EVENT);
+
+        /* Test Batch Operation */
+        // create twitter mock
+        Twitter mockTwitter = mock(Twitter.class);
+        when(mockTwitter.getUserTimeline(any(String.class), any(Paging.class))).thenReturn(null);
+        Twitter spyTwitter = spy(mockTwitter);
+
+        // swap the twitter instance in TwitterService
+        Twitter origTwitter = service.getTwitterInstance();
+        service.setTwitterInstance(spyTwitter);
+
+        // pull tweets in one period: twitter.getUserTimeline should be called at least once
+        final CommandEvent event3 = new CommandEvent(CommandEvent.CmdType.CMD_PERIODIC, "1500");
+        bezirk.sendEvent(event3);
+        Thread.sleep(2500);
+        assertTrue(service.getCurrentMode() == TwitterService.Mode.PERIODIC);
+        verify(spyTwitter, times(1)).getUserTimeline(any(String.class), any(Paging.class));
+
+        // pull all tweets: twitter.getUserTimeline should be called at least once
+        final CommandEvent event4 = new CommandEvent(CommandEvent.CmdType.CMD_PULL);
+        bezirk.sendEvent(event4);
+        Thread.sleep(2000);
+        assertTrue(service.getCurrentMode() == TwitterService.Mode.PULL);
+        verify(spyTwitter, times(2)).getUserTimeline(any(String.class), any(Paging.class));
+
+        // pull all tweets: twitter.getUserTimeline should be called at least once
+        final CommandEvent event5 = new CommandEvent(CommandEvent.CmdType.CMD_PULL, "20");
+        bezirk.sendEvent(event5);
+        Thread.sleep(2000);
+        assertTrue(service.getCurrentMode() == TwitterService.Mode.PULL);
+        verify(spyTwitter, times(3)).getUserTimeline(any(String.class), any(Paging.class));
+
+        // resume original setting
+        service.setTwitterInstance(origTwitter);
+
+        // close bezirk at the end
+        BezirkMiddleware.stop();
+    }
+
+    @Test(timeout=10000)
+    public void testWhetherEventReceiverIsCalledWhenSendAnEvent() throws InterruptedException {
+
+        // initialize the Bezirk service for testing
+        BezirkMiddleware.initialize(getContext());
+
+        // Bind the service and grab a reference to the binder.
+        IBinder binder = bindService(new Intent(getContext(), TwitterService.class));
+
+        // Get the service handle
+        TwitterService service = ((TwitterService.TwitterServiceBinder) binder).getService();
+        assertNotNull(service);
+
+        final Object syncObject = new Object();
+        EventSet.EventReceiver oldReceiver = service.getEventSetSubscriptionHandler();
+
+        // set eventSet receiver handler
+        service.setEventSetSubscriptionHandler(new EventSet.EventReceiver(){
+            @Override
+            public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
+                if(event instanceof CommandEvent){
+                    synchronized (syncObject){
+                        syncObject.notify();
+                    }
+                }
+            }
+        });
+
+        // send a bezirk message here
+        Bezirk realBezirk = BezirkMiddleware.registerZirk("TestZirk");
+        final CommandEvent dummyEvent = new CommandEvent(CommandEvent.CmdType.CMD_EVENT);
+        realBezirk.sendEvent(dummyEvent);
+
+        // wait for callback function
+        synchronized (syncObject){
+            syncObject.wait();
+        }
+        service.setEventSetSubscriptionHandler(oldReceiver);
+
+        // unregister testing zirk
+        realBezirk.unregisterZirk();
+
+        // close bezirk at the end
+        BezirkMiddleware.stop();
+    }
+
+    @Test(timeout=10000)
+    public void testSendTwitterEventNotificationDoesCallBezirkSend() {
+
+        // initialize the Bezirk service for testing
+        BezirkMiddleware.initialize(getContext());
+
+        // Bind the service and grab a reference to the binder.
+        IBinder binder = bindService(new Intent(getContext(), TwitterService.class));
+
+        // Get the service handle
+        TwitterService service = ((TwitterService.TwitterServiceBinder) binder).getService();
+        assertNotNull(service);
+
+        // create mock objects
+        Status mockStatus = mock(Status.class);
+        Bezirk mockBezirk = mock(Bezirk.class);
+
+        // create a bezirk spy to monitor sendEvent function
+        doNothing().when(mockBezirk).sendEvent(any(Event.class));
+        when(mockStatus.getCreatedAt()).thenReturn(new Date());
+        Bezirk spyBezirk = spy(mockBezirk);
+        service.setBezirkInstance(spyBezirk);
+
+        // config.sendBezirkEvent should definitely call bezirk.sendEvent
+        service.sendTwitterEventNotification(mockStatus);
+        verify(spyBezirk, times(1)).sendEvent(any(Event.class));
+
+        // close bezirk at the end
+        BezirkMiddleware.stop();
+    }
+
+    @Test
+    public void testTwitterWithoutCredentialExpectTimeout() throws InterruptedException {
+
+        // initialize the Bezirk service for testing
+        BezirkMiddleware.initialize(getContext());
+
+        // clear any credential in the persistent storage
+        TwitterDao twitterDao = new TwitterDao(getContext());
+        twitterDao.clearTwitterCredential();
+
+        // Bind the service and grab a reference to the binder.
+        IBinder binder = bindService(new Intent(getContext(), TwitterService.class));
+        assertNotNull(binder);
+
+        // Get service instances
+        TwitterService service = ((TwitterService.TwitterServiceBinder) binder).getService();
+        assertNotNull(service);
+
+        // The default operation mode should be batch
+        TwitterService.Mode mode = service.getCurrentMode();
+        assertTrue(mode == TwitterService.Mode.PULL);
+
+        // assert the dao successfully clear token
+        assertFalse(service.getTokenLoaded());
+
+        // send a mode change event
+        Bezirk bezirk = BezirkMiddleware.registerZirk("TestZirk");
+        final CommandEvent event = new CommandEvent(CommandEvent.CmdType.CMD_EVENT);
+        bezirk.sendEvent(event);
+
+        int count = 0;
+        boolean check = false;
+        while(service.getCurrentMode() != TwitterService.Mode.EVENT){
+            Thread.sleep(500);
+            count++;
+            if(count >= 10){
+                check = true;
+                break;
+            }
+        }
+        assertTrue(check);
 
         // close bezirk at the end
         BezirkMiddleware.stop();

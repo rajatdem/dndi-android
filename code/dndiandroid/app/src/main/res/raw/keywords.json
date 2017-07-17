@@ -1,0 +1,41 @@
+[
+  {
+    "category":"fruit",
+    "keywords": [
+      "apple",
+      "banana",
+      "watermelon",
+      "peach",
+      "cherry",
+      "blue berry",
+      "pineapple"
+    ]
+  },
+  {
+    "category":"software engineering",
+    "keywords":[
+      "scrum",
+      "planning",
+      "tracking",
+      "architecture",
+      "configuration management",
+      "requirement"
+    ]
+  },
+  {
+    "category":"cmu",
+    "keywords":[
+      "coding monkey",
+      "pittsburgh",
+      "expensive",
+      "computer science"
+    ]
+  },
+  {
+    "category":"testing",
+    "keywords":[
+      "hello",
+      "code"
+    ]
+  }
+]

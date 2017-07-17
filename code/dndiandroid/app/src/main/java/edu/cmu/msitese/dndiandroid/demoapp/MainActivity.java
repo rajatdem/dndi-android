@@ -9,7 +9,8 @@ import android.widget.Toast;
 import java.util.List;
 
 //import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
-import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDAO;
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
+import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordCountDao;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFrameworkListener;
 
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
             sb.append(" ");
             sb.append(keywords.get(i));
         }
-        Toast.makeText(getBaseContext(), "Match keywords:" + sb.toString(), Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Match with category:" + sb.toString(), Toast.LENGTH_LONG).show();
     }
 
     private void configUIComponents(){
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void onClickPull(View view){
-        dndi.pullDataInBatch();
+        dndi.pullDataInBatchAll();
     }
 
     public void onClickPeriodic(View view){
@@ -98,8 +99,16 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void onClickClearPreference(View view){
-        TwitterDAO dao = new TwitterDAO(this);
-        dao.clearTwitterCredential();
+        TwitterDao twitterDao = new TwitterDao(this);
+        twitterDao.clearTwitterCredential();
+
+        KeywordCountDao keywordCountDao = new KeywordCountDao(this);
+        keywordCountDao.clearTable();
+    }
+
+    public void onClickDebugInferredResult(View view){
+        KeywordCountDao dao = new KeywordCountDao(this);
+        dao.printContentToConsole();
     }
 
     public void onClickGPS(View view){

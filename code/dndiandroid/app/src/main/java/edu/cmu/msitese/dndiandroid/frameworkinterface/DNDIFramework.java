@@ -10,6 +10,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -33,7 +34,7 @@ public class DNDIFramework {
 
     // members used for interact with the config service
     private Context mContext;
-    private ConfigService mConfigService;
+    private ZirkManagerService mZirkManagerService;
     private boolean isBound = false;
 
     // the service connection callback, it will get the service instance once the binding is completed
@@ -41,7 +42,7 @@ public class DNDIFramework {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
-            mConfigService = ((ConfigService.ConfigServiceBinder) binder).getService();
+            mZirkManagerService = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
             isBound = true;
         }
 
@@ -61,7 +62,9 @@ public class DNDIFramework {
             switch (result){
                 case KEYWORD_MATCH:
                     ArrayList<String> keywords = intent.getStringArrayListExtra("keywords");
-                    ((DNDIFrameworkListener) mContext).onKeywordMatch(keywords);
+                    if(mContext instanceof DNDIFrameworkListener){
+                        ((DNDIFrameworkListener) mContext).onKeywordMatch(keywords);
+                    }
                     break;
                 case ERROR:
                     break;
@@ -77,7 +80,7 @@ public class DNDIFramework {
 
     // bind to the broadcast sent by config service
     public void resume(){
-        IntentFilter filter = new IntentFilter(ConfigService.ACTION);
+        IntentFilter filter = new IntentFilter(ZirkManagerService.ACTION);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(mBroadcastReceiver, filter);
     }
 
@@ -90,6 +93,7 @@ public class DNDIFramework {
     public void stop(){
         if(isBound){
             mContext.unbindService(mServerConn);
+            isBound = false;
         }
     }
 
@@ -98,24 +102,31 @@ public class DNDIFramework {
         return isBound;
     }
 
-    public void pullDataInBatch(){
+    public void pullDataInBatchAll(){
         if (isBound) {
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PULL);
-            mConfigService.sendBezirkEvent(evt);
+            mZirkManagerService.sendBezirkEvent(evt);
+        }
+    }
+
+    public void pullDataInBatchByNum(int num){
+        if (isBound) {
+            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PULL, Integer.toString(num));
+            mZirkManagerService.sendBezirkEvent(evt);
         }
     }
 
     public void configEventMode(){
         if (isBound) {
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_EVENT);
-            mConfigService.sendBezirkEvent(evt);
+            mZirkManagerService.sendBezirkEvent(evt);
         }
     }
 
     public void configPeriodicMode(int period){
         if (isBound) {
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PERIODIC, Integer.toString(period));
-            mConfigService.sendBezirkEvent(evt);
+            mZirkManagerService.sendBezirkEvent(evt);
         }
     }
 
@@ -124,19 +135,19 @@ public class DNDIFramework {
         if (isBound) {
             JSONObject jsonObject = Utils.packCredentialToJSON(token, secret, id);
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_CONFIG_API_KEY, jsonObject.toString());
-            mConfigService.sendBezirkEvent(evt);
+            mZirkManagerService.sendBezirkEvent(evt);
         }
     }
 
     // bind to the config service
     private void bindToConfigService(){
 
-        if(isServiceRunning(ConfigService.class)){
-            mContext.bindService(new Intent(mContext, ConfigService.class), mServerConn, Context.BIND_AUTO_CREATE);
+        if(isServiceRunning(ZirkManagerService.class)){
+            mContext.bindService(new Intent(mContext, ZirkManagerService.class), mServerConn, Context.BIND_NOT_FOREGROUND);
         }
         else{
-            mContext.startService(new Intent(mContext, ConfigService.class));
-            mContext.bindService(new Intent(mContext, ConfigService.class), mServerConn, Context.BIND_AUTO_CREATE);
+            mContext.startService(new Intent(mContext, ZirkManagerService.class));
+            mContext.bindService(new Intent(mContext, ZirkManagerService.class), mServerConn, Context.BIND_NOT_FOREGROUND);
         }
     }
 
@@ -149,18 +160,5 @@ public class DNDIFramework {
             }
         }
         return false;
-    }
-
-    // constructor exposed for testing purpose only
-    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-    public DNDIFramework(Context context, ServiceConnection conn){
-        this.mContext = context;
-        if(isServiceRunning(ConfigService.class)){
-            mContext.bindService(new Intent(mContext, ConfigService.class), conn, Context.BIND_AUTO_CREATE);
-        }
-        else{
-            mContext.startService(new Intent(mContext, ConfigService.class));
-            mContext.bindService(new Intent(mContext, ConfigService.class), conn, Context.BIND_AUTO_CREATE);
-        }
     }
 }

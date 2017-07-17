@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import edu.cmu.msitese.dndiandroid.Utils;
+import edu.cmu.msitese.dndiandroid.event.ExceptionEvent;
 import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
 import twitter4j.Paging;
 import twitter4j.Twitter;
@@ -21,7 +22,7 @@ import twitter4j.TwitterException;
  * Created by Yu-Lun Tsai on 16/06/2017.
  */
 
-public class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
+class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
 
     private static final String TAG = "ZIRK";
 
@@ -30,59 +31,75 @@ public class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
     private Twitter mTwitter;
     private String mScreenName;
 
-    public GetTweetsPeriodicTask(Context context, Bezirk bezirk, Twitter twitter, String screenName){
-        this.mContext = context;
-        this.mBezirk = bezirk;
-        this.mTwitter = twitter;
-        this.mScreenName = screenName;
+    GetTweetsPeriodicTask(Context context, Bezirk bezirk, Twitter twitter, String screenName){
+        mContext = context;
+        mBezirk = bezirk;
+        mTwitter = twitter;
+        mScreenName = screenName;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        pullTweetsSinceLastID();
+        try {
+            pullTweetsSinceLastId();
+        }
+        catch (TwitterException ex){
+            final ExceptionEvent event = new ExceptionEvent(this.getClass().getName(), ex);
+            mBezirk.sendEvent(event);
+        }
         return null;
     }
 
-    // load the last id from the sharedPreference first, and set it as one of the REST argument
-    // if there is anything new it will send a raw data event or it should print out no new tweets
-    // in the console
-    private void pullTweetsSinceLastID(){
+    /**
+     * Pull all new tweets since the last tweet id. It will load the last id from the
+     * sharedPreference first and set it as one of REST API arguments. If there are something
+     * new, it sends a RawDataEvent. Otherwise, it should print to console that no new data is
+     * available.
+     *
+     * @throws TwitterException
+     * @see    RawDataEvent
+     */
+    private void pullTweetsSinceLastId() throws TwitterException {
 
-        TwitterDAO dao = new TwitterDAO(mContext);
-        long lastID = dao.loadLastTweetID();
+        TwitterDao dao = new TwitterDao(mContext);
+        long lastId = dao.loadLastTweetId();
 
         List<twitter4j.Status>  statuses;
         Paging page = new Paging(1, 100);
 
-        // if the lastID is -1, there is no last id is stored in the sharedPreference
-        if(lastID != -1){
-            page.setSinceId(lastID);
+        // if the lastId is -1, it means no last id is stored
+        if(lastId != -1){
+            page.setSinceId(lastId);
+        }
+        statuses = mTwitter.getUserTimeline(mScreenName, page);
+
+        // it can be null when unit test uses mocks
+        if(statuses == null){
+            return;
         }
 
-        try {
-            statuses = mTwitter.getUserTimeline(mScreenName, page);
-            if(!statuses.isEmpty()){
+        // add raw data to RawDataEvent
+        if (!statuses.isEmpty()) {
 
-                final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.PERIODIC);
-                Set<Long> set = new TreeSet<>();
+            final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.PERIODIC);
+            Set<Long> set = new TreeSet<>();
 
-                for(twitter4j.Status status: statuses){
-                    set.add(status.getId());
-                    event.appendRawData(Utils.packTweetToRawDataFormat(status));
-                }
-
-                event.hasText = true;
-                event.hasLocation = true;
-                mBezirk.sendEvent(event);
-
-                long last = Collections.max(set);
-                dao.saveLastTweetID(last);
+            for (twitter4j.Status status : statuses) {
+                set.add(status.getId());
+                event.appendRawData(Utils.packTweetToRawDataFormat(status));
             }
-            else{
-                Log.i(TAG, "There is no new tweet. The last tweet ID is: " + Long.toString(lastID));
-            }
-        } catch (TwitterException e) {
-            Log.e(TAG, e.toString());
+            event.hasText = true;
+            event.hasLocation = true;
+            mBezirk.sendEvent(event);
+
+            // Update the last tweet id
+            lastId = Collections.max(set);
+            dao.saveLastTweetId(lastId);
+
+        } else {
+            Log.i(TAG, this.getClass().getName() +
+                    ":: no new tweet. The last tweet id: " +
+                    Long.toString(lastId));
         }
     }
 }

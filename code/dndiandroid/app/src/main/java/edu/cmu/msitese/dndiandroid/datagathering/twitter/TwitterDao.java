@@ -9,13 +9,13 @@ import edu.cmu.msitese.dndiandroid.R;
  * Created by Yu-Lun Tsai on 08/06/2017.
  */
 
-public class TwitterDAO {
+public class TwitterDao {
 
     private static final String TAG = "ZIRK";
 
     private Context mContext;
 
-    public TwitterDAO(Context context){
+    public TwitterDao(Context context){
         mContext = context;
     }
 
@@ -55,7 +55,7 @@ public class TwitterDAO {
     }
 
     // save the last tweet ID so that the periodic mode won't send out duplicate data
-    public void saveLastTweetID(long id){
+    public void saveLastTweetId(long id){
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE);
@@ -65,7 +65,7 @@ public class TwitterDAO {
     }
 
     // load the last tweet ID
-    public long loadLastTweetID(){
+    public long loadLastTweetId(){
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE);
@@ -74,5 +74,15 @@ public class TwitterDAO {
         if(res.equals(""))
             return -1;
         return Long.parseLong(res);
+    }
+
+    // clear twitter access token in the sharedPreference (for demo purpose only)
+    public void clearLastTweetIdRecord(){
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                mContext.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove(mContext.getString(R.string.twitter_last_tweet_id));
+        editor.apply();
     }
 }

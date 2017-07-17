@@ -38,10 +38,9 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
     @Override
     protected Void doInBackground(Integer... params) {
 
-        final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
-
         // get as many tweets as possible if no number is specified
         if(params.length == 0){
+
             int nextPageNum = 1;
             int maxPageNum = 16;
 
@@ -51,8 +50,13 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
             // pull the rest of tweets if there are more than 1600
             if(nextPageNum > maxPageNum){
                 maxPageNum = 32;
-                statuses.clear();
+                if(!statuses.isEmpty()){
+                    sendAllCurrentStatuses();
+                }
                 pullTweetsByPageRange(nextPageNum, maxPageNum);
+            }
+            if(!statuses.isEmpty()){
+                sendAllCurrentStatuses();
             }
         }
         else{
@@ -61,16 +65,6 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
                 pullTweetsByNum(num);
             }
         }
-
-        if(!statuses.isEmpty()){
-            for (twitter4j.Status status : statuses) {
-                event.appendRawData(Utils.packTweetToRawDataFormat(status));
-            }
-            event.hasText = true;
-            event.hasLocation = true;
-
-            mBezirk.sendEvent(event);
-        }
         return null;
     }
 
@@ -78,46 +72,60 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
     private int pullTweetsByPageRange(int start, int end){
 
         while(start <= end) {
+
             try {
                 int size = statuses.size();
                 Paging page = new Paging(start++, 100);
-                statuses.addAll(mTwitter.getUserTimeline(mScreenName, page));
+                List<twitter4j.Status> res = mTwitter.getUserTimeline(mScreenName, page);
+
+                // it can be null when unit test uses mocks
+                if(res == null){
+                    break;
+                }
+                statuses.addAll(res);
                 if (statuses.size() == size){
                     break;
                 }
             }
             catch(TwitterException e) {
                 Log.e(TAG, e.toString());
+                break;
             }
         }
         return start;
     }
 
     // helper function that pull tweets based on the number
-    private boolean pullTweetsByNum(int num){
+    private int pullTweetsByNum(int num){
 
+        int totalCount = 0;
         int totalPageNum = num/100;
         int remain = num%100;
+
         totalPageNum = (remain > 0) ? totalPageNum + 1 : totalPageNum;
 
         int nextPageNum = 1;
-        int tweetsPerPage = (nextPageNum == totalPageNum) ? ((remain == 0) ? 100 : remain): 100;
-
-        while(true) {
-            try {
-                int size = statuses.size();
-                Paging page = new Paging(nextPageNum, tweetsPerPage);
-                statuses.addAll(mTwitter.getUserTimeline(mScreenName, page));
-                if (statuses.size() == size || statuses.size() >= num){
-                    break;
-                }
-                nextPageNum++;
-                tweetsPerPage = (nextPageNum == totalPageNum) ? ((remain == 0) ? 100 : remain): 100;
+        while(nextPageNum <= totalPageNum){
+            nextPageNum = pullTweetsByPageRange(nextPageNum, Math.min((nextPageNum+12), totalPageNum));
+            if(!statuses.isEmpty()){
+                totalCount += statuses.size();
+                sendAllCurrentStatuses();
             }
-            catch(TwitterException e) {
-                Log.e(TAG, e.toString());
+            else{
+                break;
             }
         }
-        return (statuses.size() == num);
+        return totalCount;
+    }
+
+    private void sendAllCurrentStatuses(){
+        final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
+        for (twitter4j.Status status : statuses) {
+            event.appendRawData(Utils.packTweetToRawDataFormat(status));
+        }
+        event.hasText = true;
+        event.hasLocation = true;
+        mBezirk.sendEvent(event);
+        statuses.clear();
     }
 }
