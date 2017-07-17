@@ -65,7 +65,7 @@ dependencies {
     testCompile group: 'org.json', name: 'json', version: '20170516'
 
     // include the Bezirk middleware framework
-    compile(group: 'com.bezirk', name: 'android-zirk-proxy', version: '3.0.2-3', ext:'aar') {
+    compile(group: 'com.bezirk', name: 'android-zirk-proxy', version: '3.2.0-snapshot', ext:'aar') {
         exclude group: 'com.google.android'
         transitive = true
     }
