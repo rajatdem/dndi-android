@@ -10,8 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c7b9b82c-f406-40f2-9984-28c6703c7c2a" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.gitignore" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build.gradle" afterPath="$PROJECT_DIR$/app/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/datagathering/gps/LocationDataService.java" afterPath="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/datagathering/gps/LocationDataService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/demoapp/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/demoapp/MainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/frameworkinterface/DNDIFramework.java" afterPath="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/frameworkinterface/DNDIFramework.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/frameworkinterface/ZirkManagerService.java" afterPath="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/frameworkinterface/ZirkManagerService.java" />
     </list>
     <ignored path="dndiandroid.iws" />
@@ -57,14 +58,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ZirkManagerService.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ZirkManagerService.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/frameworkinterface/ZirkManagerService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-843">
+            <state relative-caret-position="-645">
               <caret line="51" column="37" selection-start-line="51" selection-start-column="37" selection-end-line="51" selection-end-column="37" />
               <folding>
-                <element signature="e#3018#3714#0" expanded="true" />
-                <element signature="e#3713#3714#0" expanded="true" />
+                <element signature="e#3023#3719#0" expanded="true" />
+                <element signature="e#3718#3719#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -102,15 +103,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/demoapp/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1953">
-              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+            <state relative-caret-position="150">
+              <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#6108#6109#0" expanded="true" />
-                <element signature="e#6145#6146#0" expanded="true" />
+                <element signature="e#6037#6038#0" expanded="true" />
+                <element signature="e#6074#6075#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -2178,8 +2178,8 @@
         <option value="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/datanormalization/location/GeocodingService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/datagathering/gps/LocationDataService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/datagathering/twitter/TwitterService.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/demoapp/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/frameworkinterface/ZirkManagerService.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/demoapp/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -3109,25 +3109,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/demoapp/MainActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/frameworkinterface/ZirkManagerService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1953">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+        <state relative-caret-position="-645">
+          <caret line="51" column="37" selection-start-line="51" selection-start-column="37" selection-end-line="51" selection-end-column="37" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#6108#6109#0" expanded="true" />
-            <element signature="e#6145#6146#0" expanded="true" />
+            <element signature="e#3023#3719#0" expanded="true" />
+            <element signature="e#3718#3719#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/frameworkinterface/ZirkManagerService.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/cmu/msitese/dndiandroid/demoapp/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-843">
-          <caret line="51" column="37" selection-start-line="51" selection-start-column="37" selection-end-line="51" selection-end-column="37" />
+        <state relative-caret-position="150">
+          <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
           <folding>
-            <element signature="e#3018#3714#0" expanded="true" />
-            <element signature="e#3713#3714#0" expanded="true" />
+            <element signature="e#6037#6038#0" expanded="true" />
+            <element signature="e#6074#6075#0" expanded="true" />
           </folding>
         </state>
       </provider>

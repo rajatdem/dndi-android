@@ -133,14 +133,14 @@ public class DNDIFramework {
     public void periodicGPS(int period){
         if (isBound) {
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PERIODIC, Integer.toString(period));
-            mConfigService.sendBezirkEvent(evt);
+            mZirkManagerService.sendBezirkEvent(evt);
         }
     }
 
     public void eventGPS(int shortestDist){
         if (isBound) {
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_EVENT, Integer.toString(shortestDist));
-            mConfigService.sendBezirkEvent(evt);
+            mZirkManagerService.sendBezirkEvent(evt);
         }
     }
 
@@ -174,5 +174,9 @@ public class DNDIFramework {
             }
         }
         return false;
+    }
+
+    public void stopGPSService() {
+        mZirkManagerService.stopGPSService();
     }
 }
