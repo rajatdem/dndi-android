@@ -57,9 +57,9 @@ public class LocationDataService extends Service implements ZirkEndPoint{
      * INTERVAL and FAST_INTERVAL in ms
      * DISPLACEMENT in m
      */
-    private static long INTERVAL = 1000;
-    private static long FAST_INTERVAL = 1000;
-    private static long DISPLACEMENT = 1000;
+    private static long INTERVAL = 30000; //30secs
+    private static long FAST_INTERVAL = 30000; //30secs
+    private static long DISPLACEMENT = 1000; //1000metres
     private static String mode = "PERIODIC";
 
     private Bezirk bezirk;
@@ -129,9 +129,14 @@ public class LocationDataService extends Service implements ZirkEndPoint{
         mLocationRequestPeriodic.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        checkLocationPermission(intent);
+        return START_NOT_STICKY;
+    }
+
+    //public int onStartCommand(Intent intent, int flags, int startId)
+        public void checkLocationPermission(Intent intent){
         // Let it continue running until it is stopped.
         Toast.makeText(this, "GPS Service Started", Toast.LENGTH_LONG).show();
 
@@ -211,7 +216,7 @@ public class LocationDataService extends Service implements ZirkEndPoint{
             }
         }
     }
-        return START_NOT_STICKY;
+
     }
 
     @Override
@@ -314,7 +319,11 @@ public class LocationDataService extends Service implements ZirkEndPoint{
                 switch (cmdType) {
                     case CMD_PERIODIC:
                         mode = Utils.MODE.PERIODIC.toString();
-                        FAST_INTERVAL = Integer.parseInt(commandEvent.extra);
+                        try{
+                            FAST_INTERVAL = Integer.parseInt(commandEvent.extra);
+                        } catch (NumberFormatException nExp) {
+                            //Continue to Use default Value
+                        }
                         createLocationRequestPeriodic();
                         getLocationUpdatesPeriodic();
                         Log.i(TAG, "Mode:"+mode+" | Period:"+FAST_INTERVAL);
@@ -324,7 +333,11 @@ public class LocationDataService extends Service implements ZirkEndPoint{
                         break;
                     case CMD_EVENT:
                         mode = Utils.MODE.EVENT.toString();
-                        DISPLACEMENT = Integer.parseInt(commandEvent.extra);
+                        try{
+                            DISPLACEMENT = Integer.parseInt(commandEvent.extra);
+                        } catch (NumberFormatException nExp) {
+                            //Continue to Use default Value
+                        }
                         createLocationRequestEvent();
                         getLocationUpdatesEvent();
                         Log.i(TAG, "Mode:"+mode+" | DeltaDistance:"+DISPLACEMENT);
