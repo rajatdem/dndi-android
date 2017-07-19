@@ -57,10 +57,12 @@ public class KeywordMatchServiceTest extends ServiceTestCase<KeywordMatchService
         String fakeKeyword = getClass().getName();
         String fakeCategory = getClass().getSimpleName();
         String origCategory = service.getKeywordCategory(fakeKeyword);
+
         service.insertKeywordCategoryPair(fakeKeyword, fakeCategory);
 
         String fakeTweet = "test a keyword " + fakeKeyword;
         final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
+        event.hasText = true;
         RawData data = new RawData();
         data.setText(fakeTweet);
         event.appendRawData(data);

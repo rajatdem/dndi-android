@@ -14,12 +14,12 @@ public class ResultEvent extends Event {
 
     private Map<String, Integer> occurrence = new HashMap<>();
 
-    public void increaseMatchOccurrence(String keyword){
+    public void increaseMatchOccurrence(String key){
         int count = 0;
-        if(occurrence.containsKey(keyword)){
-            count = occurrence.get(keyword);
+        if(occurrence.containsKey(key)){
+            count = occurrence.get(key);
         }
-        occurrence.put(keyword, count + 1);
+        occurrence.put(key, count + 1);
     }
 
     public boolean hasMatch(){
@@ -30,10 +30,10 @@ public class ResultEvent extends Event {
         return new ArrayList<>(occurrence.keySet());
     }
 
-    public int getMatchCount(String keyword){
+    public int getMatchCount(String key){
         int count = 0;
-        if(occurrence.containsKey(keyword)){
-            count = occurrence.get(keyword);
+        if(occurrence.containsKey(key)){
+            count = occurrence.get(key);
         }
         return count;
     }

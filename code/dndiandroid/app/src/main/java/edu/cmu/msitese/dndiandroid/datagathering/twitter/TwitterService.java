@@ -232,6 +232,7 @@ public class TwitterService extends Service {
     // callback functions that is callable by mTwitterStream listener
     public void sendTwitterEventNotification(Status status){
         final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.STREAMING);
+        event.hasText = true;
         event.appendRawData(Utils.packTweetToRawDataFormat(status));
         mBezirk.sendEvent(event);
     }
