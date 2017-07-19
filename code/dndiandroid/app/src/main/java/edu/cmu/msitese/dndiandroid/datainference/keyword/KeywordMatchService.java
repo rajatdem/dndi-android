@@ -63,7 +63,9 @@ public class KeywordMatchService extends Service {
                 if(event instanceof RawDataEvent){
                     final RawDataEvent rawDataEvent = (RawDataEvent) event;
                     Log.i(TAG, this.getClass().getName() + ":: received raw..." + rawDataEvent.toString());
-                    checkKeywordMatch(rawDataEvent.getRawDataArray());
+                    if(rawDataEvent.hasText){
+                        checkKeywordMatch(rawDataEvent.getRawDataArray());
+                    }
                 }
             }
         });

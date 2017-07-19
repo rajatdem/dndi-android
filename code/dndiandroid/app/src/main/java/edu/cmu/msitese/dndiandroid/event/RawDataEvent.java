@@ -18,8 +18,8 @@ public class RawDataEvent extends Event {
     }
 
     public RawDataEvent.GatherMode mode;
-    public boolean hasText;
-    public boolean hasLocation;
+    public boolean hasText = false;
+    public boolean hasLocation = false;
     private List<RawData> array;
 
     public RawDataEvent(GatherMode mode){

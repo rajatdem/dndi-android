@@ -1,7 +1,13 @@
 package edu.cmu.msitese.dndiandroid.demoapp;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -9,6 +15,7 @@ import android.widget.Toast;
 import java.util.List;
 
 //import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
+import edu.cmu.msitese.dndiandroid.R;
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
 import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordCountDao;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
@@ -54,13 +61,43 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
 
     @Override
     public void onKeywordMatch(List<String> keywords) {
+
         StringBuilder sb = new StringBuilder();
-        int max = Math.min(2, keywords.size());
-        for(int i = 0; i < max; i++){
+
+        for(int i = 0; i < keywords.size(); i++){
             sb.append(" ");
             sb.append(keywords.get(i));
         }
+
+        // generate a list of topics
+        sendNotification(sb.toString());
+
+        // display the matched topic in toast
         Toast.makeText(getBaseContext(), "Match with category:" + sb.toString(), Toast.LENGTH_LONG).show();
+    }
+
+    private void sendNotification(String category){
+
+        // create notification builder and set notification properties
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.mipmap.ic_launcher);
+        mBuilder.setContentTitle("A Bezirk Notification, Click Me!");
+        mBuilder.setContentText("Hi, Here is the latest coupon for (" + category + "). Click for more details!");
+        mBuilder.setAutoCancel(true);
+
+        // attach an action
+        Intent intent = new Intent(this, NotificationActivity.class);
+        intent.putExtra("match", category);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        // issue a notification
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // notificationID allows you to update the notification later on.
+        mNotificationManager.notify(0, mBuilder.build());
+
+        Log.i(TAG, this.getClass().getName() + ":: Send Android notification...");
     }
 
     private void configUIComponents(){

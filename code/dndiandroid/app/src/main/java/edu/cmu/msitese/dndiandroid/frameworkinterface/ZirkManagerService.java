@@ -48,7 +48,7 @@ public class ZirkManagerService extends Service {
         BezirkMiddleware.initialize(getBaseContext());
 
         // register with Bezirk middleware to get an instance of Bezirk API.
-        bezirk = BezirkMiddleware.registerZirk("ConfigZirk");
+        bezirk = BezirkMiddleware.registerZirk("ZirkManager");
 
         // config event receive callbacks
         eventSet.setEventReceiver(new EventSet.EventReceiver() {
