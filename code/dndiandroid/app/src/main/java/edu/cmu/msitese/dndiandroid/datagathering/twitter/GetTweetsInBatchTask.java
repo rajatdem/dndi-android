@@ -124,7 +124,7 @@ public class GetTweetsInBatchTask extends AsyncTask <Integer, Void, Void> {
             event.appendRawData(Utils.packTweetToRawDataFormat(status));
         }
         event.hasText = true;
-        event.hasLocation = true;
+//        event.hasLocation = true;
         mBezirk.sendEvent(event);
         statuses.clear();
     }

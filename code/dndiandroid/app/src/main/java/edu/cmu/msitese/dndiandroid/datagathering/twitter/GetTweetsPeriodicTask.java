@@ -89,7 +89,7 @@ class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
                 event.appendRawData(Utils.packTweetToRawDataFormat(status));
             }
             event.hasText = true;
-            event.hasLocation = true;
+//            event.hasLocation = true;
             mBezirk.sendEvent(event);
 
             // Update the last tweet id
