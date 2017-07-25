@@ -44,7 +44,7 @@ public class ZirkManagerService extends Service {
             ResultEvent.class
     );
 
-    private final IBinder mBinder = new ZirkManagerServiceBinder();
+    private final IBinder mBinder = new ConfigServiceBinder();
     private final Class<?>[] services = {
             TwitterService.class,
             LocationDataService.class,
