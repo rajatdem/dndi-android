@@ -30,6 +30,7 @@ import edu.cmu.msitese.dndiandroid.event.RawData;
 import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
 
 import static edu.cmu.msitese.dndiandroid.Utils.getLocationStringFromJSONRaw;
+//TODO: Add Check for NetworkInfo and ConnectionManager
 
 public class GeocodingService extends Service {
 
@@ -120,21 +121,22 @@ public class GeocodingService extends Service {
         }
     }
 
-
+    //Listen to bezirk event: RawDataEvent
     private void bezirkListener(EventSet eventSet) {
         eventSet.setEventReceiver(new EventSet.EventReceiver() {
 
             @Override
             public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
-
                 Log.i(TAG, this.getClass().getName() + ":: received " );
-
                 final RawDataEvent rawDataEvent = (RawDataEvent) event;
+
                 RawData data = rawDataEvent.getRawDataArray().get(0);
-                mLocation = getLocationStringFromJSONRaw(data.getLocation());
-                if(mLocation != null){
-                    Log.i(TAG, "Received Location:"+mLocation.getLatitude()+ "," + mLocation.getLongitude());
-                    getGeoCodeAddress();
+                if(data.getLocation() != null){
+                    mLocation = getLocationStringFromJSONRaw(data.getLocation());
+                    if(mLocation != null){
+                        Log.i(TAG, "Received Location:"+mLocation.getLatitude()+ "," + mLocation.getLongitude());
+                        getGeoCodeAddress();
+                    }
                 }
             }
         });

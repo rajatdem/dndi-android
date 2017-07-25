@@ -269,7 +269,7 @@ public class LocationDataService extends Service implements ZirkEndPoint{
         Log.i(TAG, longitude);
         event = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
         event.appendRawData(rawData);
-        //bezirk.sendEvent(event);
+        bezirk.sendEvent(event);
     }
 
     public void sendEmptyMessage(){
