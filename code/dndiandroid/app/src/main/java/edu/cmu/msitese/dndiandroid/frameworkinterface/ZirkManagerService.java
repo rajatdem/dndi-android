@@ -44,7 +44,7 @@ public class ZirkManagerService extends Service {
             ResultEvent.class
     );
 
-    private final IBinder mBinder = new ConfigServiceBinder();
+    private final IBinder mBinder = new ZirkManagerServiceBinder();
     private final Class<?>[] services = {
             TwitterService.class,
             LocationDataService.class,
@@ -62,21 +62,11 @@ public class ZirkManagerService extends Service {
         // initialize the Bezirk service
         BezirkMiddleware.initialize(getBaseContext());
 
-
-        // register with Bezirk middleware to get an instance of Bezirk API.
-        bezirk = BezirkMiddleware.registerZirk("ZirkManager");
-
-        // config event receive callbacks
-        eventSet.setEventReceiver(new EventSet.EventReceiver() {
-
-            @Override
-            public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
-        // initialize the zirk after the middleware has initialized
         new Timer().schedule(new ZirkInitializer(), BEZIRK_INITIALIZATION_DELAY);
+
     }
 
-
-    private class ZirkInitializer extends TimerTask {
+    class ZirkInitializer extends TimerTask {
         @Override
         public void run() {
             // register with Bezirk middleware to get an instance of Bezirk API.
