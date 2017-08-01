@@ -11,4 +11,8 @@
     <string name="no_address_found">Address Not Found</string>
     <string name="invalid_lat_long_used">Invalid Coordinates</string>
     <string name="target_twitter">DNDI_ANDROID_TWITTER</string>
+    <string name="target_gps">DNDI_ANDROID_GPS</string>
+    <string name="intent_result">DNDI_INTENT_RESULT</string>
+    <string name="intent_result_keyword">DNDI_INTENT_RESULT_KEYWORD</string>
+    <string name="intent_result_raw_location">DNDI_INTENT_RESULT_RAW_LOCATION</string>
 </resources>

@@ -18,11 +18,13 @@ import com.bezirk.middleware.messages.EventSet;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.cmu.msitese.dndiandroid.R;
 import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
 import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordMatchService;
 import edu.cmu.msitese.dndiandroid.datanormalization.location.GeocodingService;
 import edu.cmu.msitese.dndiandroid.event.KeywordMatchEvent;
+import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
 
 
 /**
@@ -41,7 +43,8 @@ public class ZirkManagerService extends Service {
 
     private Bezirk bezirk;
     private final EventSet eventSet = new EventSet(
-            KeywordMatchEvent.class
+            KeywordMatchEvent.class,
+            RawDataEvent.class
     );
 
     private final IBinder mBinder = new ZirkManagerServiceBinder();
@@ -80,10 +83,20 @@ public class ZirkManagerService extends Service {
                     if (event instanceof KeywordMatchEvent) {
                         final KeywordMatchEvent keywordMatchEvent = (KeywordMatchEvent) event;
                         Intent intent = new Intent(ACTION);
-                        intent.putExtra("result", DNDIFramework.KEYWORD_MATCH);
-                        intent.putStringArrayListExtra("keywords", keywordMatchEvent.getMatchList());
+                        intent.putExtra(
+                                getString(R.string.intent_result),
+                                DNDIFramework.KEYWORD_MATCH);
+                        intent.putStringArrayListExtra(
+                                getString(R.string.intent_result_keyword),
+                                keywordMatchEvent.getMatchList());
                         LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast
                                 (intent);
+                    }
+                    else if(event instanceof RawDataEvent) {
+                        final RawDataEvent rawDataEvent = (RawDataEvent) event;
+                        if(rawDataEvent.hasLocation){
+                            // TODO: forward the raw latlong
+                        }
                     }
                 }
             });

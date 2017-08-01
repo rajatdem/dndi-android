@@ -32,7 +32,9 @@ public class DNDIFramework {
 
     // members used for interact with the config service
     public static final String KEYWORD_MATCH = "cmu.edu.msitese.dndiandroid.DNDIFramework.MATCH_EVENT";
+    public static final String RAW_LOCATION = "cmu.edu.msitese.dndiandroid.DNDIFramework.RAW_LOCATION";
     public static final String ERROR = "cmu.edu.msitese.dndiandroid.DNDIFramework.ERROR";
+
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     private Context mContext;
     private ZirkManagerService mZirkManagerService;
@@ -59,13 +61,16 @@ public class DNDIFramework {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String result = intent.getStringExtra("result");
+            String result = intent.getStringExtra(mContext.getString(R.string.intent_result));
             switch (result){
                 case KEYWORD_MATCH:
-                    ArrayList<String> keywords = intent.getStringArrayListExtra("keywords");
+                    ArrayList<String> keywords = intent.getStringArrayListExtra(
+                            mContext.getString(R.string.intent_result_keyword));
                     if(mContext instanceof DNDIFrameworkListener){
                         ((DNDIFrameworkListener) mContext).onKeywordMatch(keywords);
                     }
+                    break;
+                case RAW_LOCATION:
                     break;
                 case ERROR:
                     break;
