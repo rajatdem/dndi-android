@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by Yu-Lun Tsai on 19/06/2017.
  */
 
-public class ResultEvent extends Event {
+public class KeywordMatchEvent extends Event {
 
     private Map<String, Integer> occurrence = new HashMap<>();
 

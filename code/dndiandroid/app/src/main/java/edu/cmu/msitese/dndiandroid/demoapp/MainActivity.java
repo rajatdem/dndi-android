@@ -17,9 +17,7 @@ import java.util.List;
 //import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.R;
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
-import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
 import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordCountDao;
-import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFrameworkListener;
 
@@ -78,6 +76,11 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
         Toast.makeText(getBaseContext(), "Match with category:" + sb.toString(), Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void onLastLocationUpdate(double latitude, double longitude) {
+
+    }
+
     private void sendNotification(String category){
 
         // create notification builder and set notification properties
@@ -107,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void onClickPull(View view){
-        dndi.pullDataInBatchAll();
+        dndi.pullTweetInBatchAll();
     }
 
     public void onClickPeriodic(View view){
@@ -121,11 +124,11 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
             // if the string is invalid, assign a default value
             num = 30000;
         }
-        dndi.configPeriodicMode(num);
+        dndi.configTwitterPeriodicMode(num);
     }
 
     public void onClickEvent(View view){
-        dndi.configEventMode();
+        dndi.configTwitterEventMode();
     }
 
     // Twitter related application code

@@ -9,4 +9,5 @@ import java.util.List;
 public interface DNDIFrameworkListener {
 
     void onKeywordMatch(List<String> keywords);
+    void onLastLocationUpdate(double latitude, double longitude);
 }

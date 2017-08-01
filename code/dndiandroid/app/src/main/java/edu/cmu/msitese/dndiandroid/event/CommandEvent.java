@@ -28,4 +28,16 @@ public class CommandEvent extends Event {
         this.type = type;
         this.extra = extra;
     }
+
+    // include target in the constructor
+    public CommandEvent(String target, CmdType type){
+        this.type = type;
+        this.target = target;
+    }
+
+    public CommandEvent(String target, CmdType type, String extra){
+        this.type = type;
+        this.target = target;
+        this.extra = extra;
+    }
 }

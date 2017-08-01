@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeoutException;
 
-import edu.cmu.msitese.dndiandroid.event.ResultEvent;
+import edu.cmu.msitese.dndiandroid.event.KeywordMatchEvent;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.ZirkManagerService;
 
 import static org.mockito.Mockito.doNothing;
@@ -86,7 +86,7 @@ public class ZirkManagerServiceTest extends ServiceTestCase<ZirkManagerService> 
         service.setEventSetSubscriptionHandler(new EventSet.EventReceiver(){
             @Override
             public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
-                if(event instanceof ResultEvent){
+                if(event instanceof KeywordMatchEvent){
                     synchronized (syncObject){
                         syncObject.notify();
                     }
@@ -96,7 +96,7 @@ public class ZirkManagerServiceTest extends ServiceTestCase<ZirkManagerService> 
 
         // send a bezirk message here
         Bezirk realBezirk = BezirkMiddleware.registerZirk("UnitTestZirk");
-        final ResultEvent dummyEvent = new ResultEvent();
+        final KeywordMatchEvent dummyEvent = new KeywordMatchEvent();
         realBezirk.sendEvent(dummyEvent);
 
         // wait for callback function

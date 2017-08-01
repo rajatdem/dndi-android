@@ -22,7 +22,7 @@ import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
 import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordMatchService;
 import edu.cmu.msitese.dndiandroid.datanormalization.location.GeocodingService;
-import edu.cmu.msitese.dndiandroid.event.ResultEvent;
+import edu.cmu.msitese.dndiandroid.event.KeywordMatchEvent;
 
 
 /**
@@ -41,7 +41,7 @@ public class ZirkManagerService extends Service {
 
     private Bezirk bezirk;
     private final EventSet eventSet = new EventSet(
-            ResultEvent.class
+            KeywordMatchEvent.class
     );
 
     private final IBinder mBinder = new ZirkManagerServiceBinder();
@@ -77,11 +77,11 @@ public class ZirkManagerService extends Service {
                 @Override
                 public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
 
-                    if (event instanceof ResultEvent) {
-                        final ResultEvent resultEvent = (ResultEvent) event;
+                    if (event instanceof KeywordMatchEvent) {
+                        final KeywordMatchEvent keywordMatchEvent = (KeywordMatchEvent) event;
                         Intent intent = new Intent(ACTION);
                         intent.putExtra("result", DNDIFramework.KEYWORD_MATCH);
-                        intent.putStringArrayListExtra("keywords", resultEvent.getMatchList());
+                        intent.putStringArrayListExtra("keywords", keywordMatchEvent.getMatchList());
                         LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast
                                 (intent);
                     }

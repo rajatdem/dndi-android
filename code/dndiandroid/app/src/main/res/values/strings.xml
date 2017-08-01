@@ -10,4 +10,5 @@
     <string name="service_not_available">Service Not Available</string>
     <string name="no_address_found">Address Not Found</string>
     <string name="invalid_lat_long_used">Invalid Coordinates</string>
+    <string name="target_twitter">DNDI_ANDROID_TWITTER</string>
 </resources>

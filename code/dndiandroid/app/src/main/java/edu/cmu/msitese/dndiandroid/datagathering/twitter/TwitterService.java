@@ -17,6 +17,7 @@ import com.bezirk.middleware.messages.Event;
 import com.bezirk.middleware.messages.EventSet;
 
 import edu.cmu.msitese.dndiandroid.BuildConfig;
+import edu.cmu.msitese.dndiandroid.R;
 import edu.cmu.msitese.dndiandroid.Utils;
 
 import edu.cmu.msitese.dndiandroid.event.CommandEvent;
@@ -93,6 +94,11 @@ public class TwitterService extends Service {
 
                 final CommandEvent commandEvent = (CommandEvent) event;
                 CommandEvent.CmdType cmdType = commandEvent.type;
+
+                // check whether the command is targeted at twitter zirk
+                if(!commandEvent.target.equals(getString(R.string.target_twitter))){
+                    return;
+                }
 
                 Log.i(TAG, this.getClass().getName() + ":: received " + cmdType);
                 if(!mTokenLoaded && cmdType != CommandEvent.CmdType.CMD_CONFIG_API_KEY){

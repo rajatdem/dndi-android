@@ -63,25 +63,25 @@ public class DNDIFrameworkTest  {
         Thread.sleep(1000);
 
         // test pull operation and the test Zirk must be notified
-        dndi.pullDataInBatchAll();
+        dndi.pullTweetInBatchAll();
         synchronized (syncObject){
             syncObject.wait();
         }
 
         // test pull operation by num and the test Zirk must be notified
-        dndi.pullDataInBatchByNum(20);
+        dndi.pullTweetInBatchByNum(20);
         synchronized (syncObject){
             syncObject.wait();
         }
 
         // test pull operation by num and the test Zirk must be notified
-        dndi.configPeriodicMode(500);
+        dndi.configTwitterPeriodicMode(500);
         synchronized (syncObject){
             syncObject.wait();
         }
 
         // configure the dndi into event mode
-        dndi.configEventMode();
+        dndi.configTwitterEventMode();
 
         // pause dndi and restart it
         dndi.pause();

@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import edu.cmu.msitese.dndiandroid.event.KeywordMatchEvent;
 import edu.cmu.msitese.dndiandroid.event.RawData;
 import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
-import edu.cmu.msitese.dndiandroid.event.ResultEvent;
 
 /**
  * Created by Yu-Lun Tsai on 19/06/2017.
@@ -88,25 +88,25 @@ public class KeywordMatchService extends Service {
     // given a list of RawData objects, check whether there is keywords in the text
     private void checkKeywordMatch(List<RawData> array){
 
-        final ResultEvent resultEvent = new ResultEvent();
+        final KeywordMatchEvent keywordMatchEvent = new KeywordMatchEvent();
         List<Keyword> keywordList = new ArrayList<>();
 
         // split the text into tokens and check whether these tokens are in the hash map
-        // if there is a match, it will append the match category at the end of the resultEvent
+        // if there is a match, it will append the match category at the end of the keywordMatchEvent
         // send it back to the configService
         for(RawData data: array){
             String[] tokens = data.getText().split("\\s+");
             for(String token: tokens){
                 if(mKeywordMap.containsKey(token)){
                     String category = mKeywordMap.get(token);
-                    resultEvent.increaseMatchOccurrence(category);
+                    keywordMatchEvent.increaseMatchOccurrence(category);
                     keywordList.add(new Keyword(token, category));
                     Log.i(TAG, this.getClass().getName() + ":: match " + token + " (" + category + ")");
                 }
             }
         }
-        if(resultEvent.hasMatch()){
-            bezirk.sendEvent(resultEvent);
+        if(keywordMatchEvent.hasMatch()){
+            bezirk.sendEvent(keywordMatchEvent);
         }
         if(!keywordList.isEmpty()){
             new UpdateKeywordCountTask().execute(

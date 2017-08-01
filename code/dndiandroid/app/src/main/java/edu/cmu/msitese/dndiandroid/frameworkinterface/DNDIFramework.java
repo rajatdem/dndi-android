@@ -14,6 +14,7 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
+import edu.cmu.msitese.dndiandroid.R;
 import edu.cmu.msitese.dndiandroid.Utils;
 import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.event.CommandEvent;
@@ -102,30 +103,35 @@ public class DNDIFramework {
         return isBound;
     }
 
-    public void pullDataInBatchAll(){
+    public void pullTweetInBatchAll(){
         if (isBound) {
-            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PULL);
+            final CommandEvent evt = new CommandEvent(mContext.getString(R.string.target_twitter),
+                    CommandEvent.CmdType.CMD_PULL);
+
             mZirkManagerService.sendBezirkEvent(evt);
         }
     }
 
-    public void pullDataInBatchByNum(int num){
+    public void pullTweetInBatchByNum(int num){
         if (isBound) {
-            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PULL, Integer.toString(num));
+            final CommandEvent evt = new CommandEvent(mContext.getString(R.string.target_twitter),
+                    CommandEvent.CmdType.CMD_PULL, Integer.toString(num));
             mZirkManagerService.sendBezirkEvent(evt);
         }
     }
 
-    public void configEventMode(){
+    public void configTwitterEventMode(){
         if (isBound) {
-            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_EVENT);
+            final CommandEvent evt = new CommandEvent(mContext.getString(R.string.target_twitter),
+                    CommandEvent.CmdType.CMD_EVENT);
             mZirkManagerService.sendBezirkEvent(evt);
         }
     }
 
-    public void configPeriodicMode(int period){
+    public void configTwitterPeriodicMode(int period){
         if (isBound) {
-            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PERIODIC, Integer.toString(period));
+            final CommandEvent evt = new CommandEvent(mContext.getString(R.string.target_twitter),
+                    CommandEvent.CmdType.CMD_PERIODIC, Integer.toString(period));
             mZirkManagerService.sendBezirkEvent(evt);
         }
     }
