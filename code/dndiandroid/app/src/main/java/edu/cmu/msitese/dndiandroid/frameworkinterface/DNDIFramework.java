@@ -7,8 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.location.Location;
 import android.os.IBinder;
-import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 import edu.cmu.msitese.dndiandroid.R;
 import edu.cmu.msitese.dndiandroid.Utils;
-import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.event.CommandEvent;
 
 import java.util.ArrayList;
@@ -61,7 +60,9 @@ public class DNDIFramework {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+
             String result = intent.getStringExtra(mContext.getString(R.string.intent_result));
+
             switch (result){
                 case KEYWORD_MATCH:
                     ArrayList<String> keywords = intent.getStringArrayListExtra(
@@ -71,8 +72,15 @@ public class DNDIFramework {
                     }
                     break;
                 case RAW_LOCATION:
+                    Location location = intent.getParcelableExtra(
+                            mContext.getString(R.string.intent_result_raw_location));
+                    if(mContext instanceof DNDIFrameworkListener){
+                        ((DNDIFrameworkListener) mContext).onLastLocationUpdate(location);
+                    }
                     break;
                 case ERROR:
+                    break;
+                default:
                     break;
             }
         }
@@ -86,12 +94,14 @@ public class DNDIFramework {
 
     // bind to the broadcast sent by config service
     public void resume(){
+        Log.i(TAG, "onResume is called");
         IntentFilter filter = new IntentFilter(ZirkManagerService.ACTION);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(mBroadcastReceiver, filter);
    }
 
-    // unbind the broadcast sebt by the config service
+    // unbind the broadcast sent by the config service
     public void pause(){
+        Log.i(TAG, "onPaused is called");
         LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiver);
     }
 

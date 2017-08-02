@@ -28,7 +28,7 @@ import twitter4j.auth.RequestToken;
 
 public class GetTwitterTokenTask extends AsyncTask<String, Void, String> {
 
-    private static final String TAG = "APP";
+    private static final String TAG = "DNDI_APP";
 
     // GUI objects
     private Context mContext;

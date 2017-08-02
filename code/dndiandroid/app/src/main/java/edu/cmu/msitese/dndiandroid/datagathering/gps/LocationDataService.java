@@ -268,6 +268,7 @@ public class LocationDataService extends Service implements ZirkEndPoint{
         Log.i(TAG, latitude);
         Log.i(TAG, longitude);
         event = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
+        event.hasLocation = true;
         event.appendRawData(rawData);
         bezirk.sendEvent(event);
     }

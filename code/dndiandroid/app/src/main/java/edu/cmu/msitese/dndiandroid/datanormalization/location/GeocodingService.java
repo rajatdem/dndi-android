@@ -111,7 +111,7 @@ public class GeocodingService extends Service {
             }
         } else {
             Address address = addresses.get(0);
-            Log.wtf(TAG, address.toString());
+            Log.i(TAG, address.toString());
             ArrayList<String> addressFragments = new ArrayList<>();
 
             for(int i = 0; i < address.getMaxAddressLineIndex(); i++) {

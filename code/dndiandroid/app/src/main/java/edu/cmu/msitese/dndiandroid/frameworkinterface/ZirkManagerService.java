@@ -2,6 +2,7 @@ package edu.cmu.msitese.dndiandroid.frameworkinterface;
 
 import android.app.Service;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -24,7 +25,10 @@ import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
 import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordMatchService;
 import edu.cmu.msitese.dndiandroid.datanormalization.location.GeocodingService;
 import edu.cmu.msitese.dndiandroid.event.KeywordMatchEvent;
+import edu.cmu.msitese.dndiandroid.event.RawData;
 import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
+
+import static edu.cmu.msitese.dndiandroid.Utils.getLocationStringFromJSONRaw;
 
 
 /**
@@ -39,7 +43,7 @@ public class ZirkManagerService extends Service {
     // anywhere between 300-1500 ms to initialize completely. This delay (in ms) is used to ensure
     // that the initialization has completed before zirks are registered with the middleware.
     private static final int BEZIRK_INITIALIZATION_DELAY = 1500;
-    public static final String ACTION = "edu.cmu.msitese.dndiandroid.ConfigService";
+    public static final String ACTION = "edu.cmu.msitese.dndiandroid.ZirkManagerService";
 
     private Bezirk bezirk;
     private final EventSet eventSet = new EventSet(
@@ -60,20 +64,18 @@ public class ZirkManagerService extends Service {
      */
     @Override
     public void onCreate() {
-
-        Log.wtf(TAG, "STARTING OTHER SERVICES");
         // initialize the Bezirk service
         BezirkMiddleware.initialize(getBaseContext());
 
         new Timer().schedule(new ZirkInitializer(), BEZIRK_INITIALIZATION_DELAY);
-
     }
 
     class ZirkInitializer extends TimerTask {
+
         @Override
         public void run() {
             // register with Bezirk middleware to get an instance of Bezirk API.
-            bezirk = BezirkMiddleware.registerZirk("ConfigZirk");
+            bezirk = BezirkMiddleware.registerZirk("ZirkManager");
 
             eventSet.setEventReceiver(new EventSet.EventReceiver() {
 
@@ -83,19 +85,23 @@ public class ZirkManagerService extends Service {
                     if (event instanceof KeywordMatchEvent) {
                         final KeywordMatchEvent keywordMatchEvent = (KeywordMatchEvent) event;
                         Intent intent = new Intent(ACTION);
-                        intent.putExtra(
-                                getString(R.string.intent_result),
-                                DNDIFramework.KEYWORD_MATCH);
-                        intent.putStringArrayListExtra(
-                                getString(R.string.intent_result_keyword),
-                                keywordMatchEvent.getMatchList());
-                        LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast
-                                (intent);
+                        intent.putExtra(getString(R.string.intent_result), DNDIFramework.KEYWORD_MATCH);
+                        intent.putStringArrayListExtra(getString(R.string.intent_result_keyword), keywordMatchEvent.getMatchList());
+                        LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
                     }
                     else if(event instanceof RawDataEvent) {
                         final RawDataEvent rawDataEvent = (RawDataEvent) event;
                         if(rawDataEvent.hasLocation){
-                            // TODO: forward the raw latlong
+                            RawData data = rawDataEvent.getRawDataArray().get(0);
+                            if(data.getLocation() != null){
+                                Location location = getLocationStringFromJSONRaw(data.getLocation());
+                                if(location != null){
+                                    Intent intent = new Intent(ACTION);
+                                    intent.putExtra(getString(R.string.intent_result), DNDIFramework.RAW_LOCATION);
+                                    intent.putExtra(getString(R.string.intent_result_raw_location), location);
+                                    LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
+                                }
+                            }
                         }
                     }
                 }

@@ -11,7 +11,7 @@ import edu.cmu.msitese.dndiandroid.R;
 
 public class NotificationActivity extends AppCompatActivity {
 
-    private static final String TAG = "APP";
+    private static final String TAG = "DNDI_APP";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -4,9 +4,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -24,7 +26,7 @@ import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFrameworkListener;
 
 public class MainActivity extends AppCompatActivity implements DNDIFrameworkListener {
 
-    private static final String TAG = "APP";
+    private static final String TAG = "DNDI_APP";
     private DNDIFramework dndi;
 
     private EditText mEditTestInput;
@@ -62,23 +64,18 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     @Override
     public void onKeywordMatch(List<String> keywords) {
 
-        StringBuilder sb = new StringBuilder();
-
-        for(int i = 0; i < keywords.size(); i++){
-            sb.append(" ");
-            sb.append(keywords.get(i));
-        }
+        String result = TextUtils.join(", ", keywords);
 
         // generate a list of topics
-        sendNotification(sb.toString());
+        sendNotification(result);
 
         // display the matched topic in toast
-        Toast.makeText(getBaseContext(), "Match with category:" + sb.toString(), Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Match with category:" + result, Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void onLastLocationUpdate(double latitude, double longitude) {
-
+    public void onLastLocationUpdate(Location location) {
+        Log.i(TAG, "Location: " + location);
     }
 
     private void sendNotification(String category){
