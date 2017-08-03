@@ -37,6 +37,7 @@ public class LoginActivity extends AppCompatActivity implements GetTwitterTokenT
     public void onClickTwitterSignInButton(View view){
 
         if(dao.checkTwitterCredential()){
+            Log.i(TAG, "load twitter credential saved before");
             startMainActivity();
         }
         else{
