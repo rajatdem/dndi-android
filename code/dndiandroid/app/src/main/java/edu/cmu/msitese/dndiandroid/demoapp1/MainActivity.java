@@ -1,4 +1,4 @@
-package edu.cmu.msitese.dndiandroid.demoapp;
+package edu.cmu.msitese.dndiandroid.demoapp1;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;

@@ -15,4 +15,9 @@
     <string name="intent_result">DNDI_INTENT_RESULT</string>
     <string name="intent_result_keyword">DNDI_INTENT_RESULT_KEYWORD</string>
     <string name="intent_result_raw_location">DNDI_INTENT_RESULT_RAW_LOCATION</string>
+
+    <string name="app_sp">cmu.edu.demoapp2.sp</string>
+    <string name="app_twitter_credential">cmu.edu.demoapp2.twitter.credential</string>
+    <string name="app_twitter_token">cmu.edu.demoapp2.twitter.token</string>
+    <string name="app_twitter_secret">cmu.edu.demoapp2.twitter.secret</string>
 </resources>
