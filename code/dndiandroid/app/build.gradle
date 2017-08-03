@@ -12,15 +12,22 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        // include twitter related constants
         buildConfigField("String", "TWITTER_API_KEY", TWITTER_API_KEY)
         buildConfigField("String", "TWITTER_API_SECRET", TWITTER_API_SECRET)
         buildConfigField("String", "TWITTER_ACCESS_TOKEN", TWITTER_ACCESS_TOKEN)
         buildConfigField("String", "TWITTER_ACCESS_SECRET", TWITTER_ACCESS_SECRET)
         buildConfigField("String", "TWITTER_USER_ID", TWITTER_USER_ID)
 
-
+        // include facebook related constants
         buildConfigField("String", "FACEBOOK_API_KEY", FACEBOOK_API_KEY)
+
+        // include google play service related constants
         buildConfigField("String", "GOOGLE_PLACE_API_KEY", GOOGLE_PLACE_API_KEY)
+
+        // include yelp related constants
+        buildConfigField("String", "YELP_API_KEY", YELP_API_KEY)
+        buildConfigField("String", "YELP_API_SECRET", YELP_API_SECRET)
 
         // Enabling multidex support.
         multiDexEnabled true
@@ -44,6 +51,9 @@ android {
     lintOptions {
         abortOnError false
     }
+    packagingOptions {
+        pickFirst  'META-INF/LICENSE'
+    }
 }
 
 dependencies {
@@ -53,14 +63,14 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    // use the Hamcrest matcher library
-    
 
     // include Mokito for unit test
+    // use the Hamcrest matcher library
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'org.mockito:mockito-core:2.7.22'
     androidTestCompile 'org.mockito:mockito-android:2.7.22'
+
     // include json for testing
     testCompile group: 'org.json', name: 'json', version: '20170516'
 
@@ -70,19 +80,24 @@ dependencies {
         transitive = true
     }
 
-    // include twitter4j package
+    // include twitter4j package (sdk made by a third-party developer)
     compile 'org.twitter4j:twitter4j-core:4.0.6'
     compile 'org.twitter4j:twitter4j-async:4.0.6'
     compile 'org.twitter4j:twitter4j-stream:4.0.6'
+
     // include facebook package
 //  compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 
-    // include Google Play Services
+    // include google play services
     compile 'com.google.android.gms:play-services-places:11.0.1'
     compile 'com.google.android.gms:play-services-location:11.0.1'
     compile 'com.google.android.gms:play-services-maps:11.0.1'
 
+    // include to handle too many function signatures
     compile 'com.android.support:multidex:1.0.0'
+
+    // include android-yelp package (sdk made by a third-party developer)
+    compile 'io.github.ranga543:yelp-fusion-client:0.1.2'
 }
 
 // add the Bezirk repository
