@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
         super.onCreate(savedInstanceState);
 
         // config layout and UI components
-        setContentView(edu.cmu.msitese.dndiandroid.R.layout.activity_main);
+        setContentView(edu.cmu.msitese.dndiandroid.R.layout.demoapp1_activity_main);
         configUIComponents();
 
         // initialize the DNDI framework

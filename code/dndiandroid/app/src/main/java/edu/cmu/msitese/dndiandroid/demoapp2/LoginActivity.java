@@ -18,7 +18,7 @@ public class LoginActivity extends AppCompatActivity implements GetTwitterTokenT
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.demoapp2_activity_login);
         hideSystemUI();
 
         dao = new TwitterCredentialDao(this);
@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements GetTwitterTokenT
     }
 
     private void startMainActivity(){
-//        Intent intent = new Intent(this, MainActivity.class);
-//        startActivity(intent);
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
