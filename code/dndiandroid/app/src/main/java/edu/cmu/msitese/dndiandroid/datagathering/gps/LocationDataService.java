@@ -57,10 +57,10 @@ public class LocationDataService extends Service implements ZirkEndPoint{
      * INTERVAL and FAST_INTERVAL in ms
      * DISPLACEMENT in m
      */
-    private static long INTERVAL = 30000; //30secs
-    private static long FAST_INTERVAL = 30000; //30secs
-    private static long DISPLACEMENT = 1000; //1000metres
-    private static String mode = "PERIODIC";
+    private static long INTERVAL = 30000; //30secs default
+    private static long FAST_INTERVAL = 30000; //30secs default
+    private static long DISPLACEMENT = 1000; //1000metres default
+    private static String mode = "NONE";
 
     private Bezirk bezirk;
     private RawData rawData;
@@ -152,6 +152,8 @@ public class LocationDataService extends Service implements ZirkEndPoint{
                 case "PERIODIC":
                     getLocationUpdatesPeriodic();
                     break;
+                case "NONE":
+                    break; //No need to gather GPS data in this mode.
                 default:
                     getLocation();
             }
@@ -183,6 +185,8 @@ public class LocationDataService extends Service implements ZirkEndPoint{
                     case "PERIODIC":
                         getLocationUpdatesPeriodic();
                         break;
+                    case "NONE":
+                        break; //No need to gather GPS data in this mode.
                     default:
                         getLocation();
                 }
@@ -209,6 +213,8 @@ public class LocationDataService extends Service implements ZirkEndPoint{
                         break;
                     case "PERIODIC":
                         getLocationUpdatesPeriodic();
+                        break;
+                    case "NONE":
                         break;
                     default:
                         getLocation();
