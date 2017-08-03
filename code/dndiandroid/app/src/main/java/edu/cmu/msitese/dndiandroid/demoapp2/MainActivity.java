@@ -1,6 +1,7 @@
 package edu.cmu.msitese.dndiandroid.demoapp2;
 
 import android.content.DialogInterface;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -14,13 +15,17 @@ import android.widget.ListView;
 import java.util.List;
 
 import edu.cmu.msitese.dndiandroid.R;
+import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
+import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFrameworkListener;
 
 public class MainActivity extends AppCompatActivity implements
-        SearchOnYelpTaskListener, PostTwitterTaskListener {
+        SearchOnYelpTaskListener, PostTwitterTaskListener, DNDIFrameworkListener {
 
     private static final String TAG = "YELP_DEMO";
 
     private static final String APPBAR_TITLE = "Restaurant";
+    private DNDIFramework dndi;
+    private Location mLastLocation = null;
     private ListView mListView;
 
     @Override
@@ -31,6 +36,9 @@ public class MainActivity extends AppCompatActivity implements
         loadUIComponents();
 
         new SearchOnYelpTask(this).execute();
+
+        // initialize the dndi framework
+        dndi = new DNDIFramework(this);
     }
 
     @Override
@@ -85,6 +93,10 @@ public class MainActivity extends AppCompatActivity implements
         alert.show();
     }
 
+    private void pullUserHistoricalTweets(){
+        dndi.pullTweetInBatchAll();
+    }
+
     @Override
     public void onSearchTaskCompleted(List<RestaurantInfoCell> results) {
         final RestaurantInfoListAdapter adapter = new RestaurantInfoListAdapter(this, results);
@@ -106,5 +118,26 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onPostTaskFailed(String message) {
         Log.i(TAG, "failed to post a tweet: " + message);
+    }
+
+    @Override
+    public void onInitializationCompleted() {
+        Log.i(TAG, "the dndi is initialized successfully");
+    }
+
+    @Override
+    public void onKeywordMatch(List<String> keywords) {
+
+    }
+
+    @Override
+    public void onLastLocationUpdate(Location location) {
+
+        if(mLastLocation == null){
+            mLastLocation = location;
+        }
+        else{
+
+        }
     }
 }

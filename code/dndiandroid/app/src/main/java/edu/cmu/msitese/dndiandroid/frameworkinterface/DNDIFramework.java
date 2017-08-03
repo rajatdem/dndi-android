@@ -46,6 +46,9 @@ public class DNDIFramework {
         public void onServiceConnected(ComponentName name, IBinder binder) {
             mZirkManagerService = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
             isBound = true;
+            if(mContext instanceof DNDIFrameworkListener){
+                ((DNDIFrameworkListener) mContext).onInitializationCompleted();
+            }
         }
 
         @Override

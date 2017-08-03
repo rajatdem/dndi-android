@@ -9,6 +9,7 @@ import java.util.List;
  */
 
 public interface DNDIFrameworkListener {
+    void onInitializationCompleted();
     void onKeywordMatch(List<String> keywords);
     void onLastLocationUpdate(Location location);
 }

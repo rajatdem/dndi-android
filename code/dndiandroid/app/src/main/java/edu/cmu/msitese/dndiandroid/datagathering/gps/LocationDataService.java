@@ -128,7 +128,6 @@ public class LocationDataService extends Service implements ZirkEndPoint {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "Start Service called");
         checkLocationPermission(intent);
         return START_NOT_STICKY;
     }
