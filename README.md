@@ -220,9 +220,49 @@ Format of the JSON file
 
 ### Test the new components
 
-[Yu-Lun](https://github.com/stormysun513/)
+One may consider testing the new zirk to the framework. One can refer to some androidtest files in the test directory. We illustrate the way how a zirk is tested. 
 
-specify how to unit test and integration test the framework
+Each testcase has its own context, so one has to initialize the bezirk middleware everytime. Later, create an object used to notify the waiting main thread. The reason why we implement th testcase in this way is that bezirk requires time for initialization. A TimerTask is required to have a slight delay before starting testing. After having this code structure, one can put the testing logics in the `run()` function overrided by the TimerTask.
+
+```java
+@Test(timeout = 30000)
+public void testKeywordMatchEvent() throws InterruptedException {
+	// initialize the Bezirk service for testing
+	BezirkMiddleware.initialize(getContext());
+	
+	// sync object used to check whether timertask completes before the timeout budget
+	final Object syncObject = new Object();
+	
+	new Timer().schedule(new TimerTask() {
+		@Override
+		public void run() {
+	
+			// Bind the service and grab a reference to the binder.
+			IBinder binder = bindService(new Intent(getContext(), KeywordMatchService.class));
+			assertNotNull(binder);
+		
+			// Get service instances
+			KeywordMatchService service = ((KeywordMatchService.KeywordMatchServiceBinder) binder).getService();
+			assertNotNull(service);
+
+			// TODO: add testing logic here
+		
+			BezirkMiddleware.stop();
+			
+			synchronized (syncObject) {
+				syncObject.notify();
+			}
+		}
+	}, 1000);
+	
+	// wait for timertask to complete
+	synchronized (syncObject) {
+		syncObject.wait();
+	}
+}
+```
+
+Although most zirks are running independently and no other activities or services will bind to them, one may still implement the `onBind` method and return a IBinder for testing purpose. The latest Android SDK has provided an anotation for methods that is defined for testing only. One can check the usage of anotation `@VisibleForTesting(otherwise = VisibleForTesting.NONE)`.
 
 ### Maintain the lifecycle for resource cleanup and power saving
 
