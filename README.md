@@ -10,9 +10,7 @@ A data preparation framework built on top of Bezirk middleware
 
 ## Overview
 
-[Yu-Lun](https://github.com/stormysun513/)
-
-add the project overview here, include a vrief explanation of zirk here
+DNDI is an Android framework that makes manage zirks (an Android service using the Bezirk middleware for communication among other services). One can create their own zirk and plug into the framework easily. As for the developer, it provides a simple interface to collect multiple data sources with a single interface.
 
 ## Architecture
 
