@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterInfoDao;
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
 import edu.cmu.msitese.dndiandroid.event.CommandEvent;
 import twitter4j.Paging;
@@ -299,8 +299,8 @@ public class TwitterServiceTest extends ServiceTestCase<TwitterService> {
             public void run() {
 
                 // clear any credential in the persistent storage
-                TwitterDao twitterDao = new TwitterDao(getContext());
-                twitterDao.clearTwitterCredential();
+                TwitterInfoDao twitterInfoDao = new TwitterInfoDao(getContext());
+                twitterInfoDao.clearTwitterCredential();
 
                 // Bind the service and grab a reference to the binder.
                 IBinder binder = bindService(new Intent(getContext(), TwitterService.class));

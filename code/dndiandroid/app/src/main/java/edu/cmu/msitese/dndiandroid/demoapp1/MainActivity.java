@@ -18,7 +18,7 @@ import java.util.List;
 
 //import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.R;
-import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterInfoDao;
 import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordCountDao;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFrameworkListener;
@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void onClickClearPreference(View view){
-        TwitterDao twitterDao = new TwitterDao(this);
-        twitterDao.clearTwitterCredential();
+        TwitterInfoDao twitterInfoDao = new TwitterInfoDao(this);
+        twitterInfoDao.clearTwitterCredential();
 
         KeywordCountDao keywordCountDao = new KeywordCountDao(this);
         keywordCountDao.clearTable();

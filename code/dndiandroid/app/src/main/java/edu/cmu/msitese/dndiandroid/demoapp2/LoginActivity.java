@@ -48,7 +48,10 @@ public class LoginActivity extends AppCompatActivity implements GetTwitterTokenT
     @Override
     public void onTokenTaskCompleted(AccessToken accessToken) {
         Log.i(TAG, "successfully sign in with twitter account");
-        dao.saveTwitterCredential(accessToken.getToken(), accessToken.getTokenSecret());
+        dao.saveTwitterCredential(
+                accessToken.getToken(),
+                accessToken.getTokenSecret(),
+                accessToken.getScreenName());
         startMainActivity();
     }
 

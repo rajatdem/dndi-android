@@ -9,13 +9,13 @@ import edu.cmu.msitese.dndiandroid.R;
  * Created by Yu-Lun Tsai on 08/06/2017.
  */
 
-public class TwitterDao {
+public class TwitterInfoDao {
 
     private static final String TAG = "ZIRK";
 
     private Context mContext;
 
-    public TwitterDao(Context context){
+    public TwitterInfoDao(Context context){
         mContext = context;
     }
 

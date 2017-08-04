@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String APPBAR_TITLE = "Restaurant";
     private static final float MIN_DISTANCE_DELTA = 100f; // 100 meters
-    private static final int PULL_TWEET_DELAY = 500;
+    private static final int DNDI_DELAY = 500;
     private static final int UPDATE_DELAY = 5000;
 
     private DNDIFramework dndi;
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onInitializationCompleted() {
-        new Timer().schedule(new DelayPullTweet(), PULL_TWEET_DELAY);
+        new Timer().schedule(new DelayConfigCredential(), DNDI_DELAY);
     }
 
     @Override
@@ -210,6 +210,20 @@ public class MainActivity extends AppCompatActivity implements
                 params.location = location;
                 new SearchOnYelpTask(this).execute(params);
             }
+        }
+    }
+
+    class DelayConfigCredential extends TimerTask {
+
+        @Override
+        public void run() {
+            TwitterCredentialDao dao = new TwitterCredentialDao(MainActivity.this);
+            TwitterCredential credential = dao.getTwitterCredential();
+            dndi.configTwitterCredential(
+                    credential.accessToken,
+                    credential.accessSecret,
+                    credential.screenName);
+            new Timer().schedule(new DelayPullTweet(), DNDI_DELAY);
         }
     }
 

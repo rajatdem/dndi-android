@@ -10,7 +10,7 @@ import com.bezirk.middleware.messages.EventSet;
 
 import org.junit.Test;
 
-import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterInfoDao;
 import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
 
@@ -27,8 +27,8 @@ public class DNDIFrameworkTest  {
     public void testDNDIFrameworkIntegration() throws InterruptedException {
 
         // clear twitter credential first
-        TwitterDao twitterDao = new TwitterDao(InstrumentationRegistry.getTargetContext());
-        twitterDao.clearTwitterCredential();
+        TwitterInfoDao twitterInfoDao = new TwitterInfoDao(InstrumentationRegistry.getTargetContext());
+        twitterInfoDao.clearTwitterCredential();
 
         // initialize the DNDIFramework
         DNDIFramework dndi = new DNDIFramework(InstrumentationRegistry.getTargetContext());

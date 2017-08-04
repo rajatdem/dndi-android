@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">dndiandroid</string>
     <string name="label_main_page">Hello Zirk!</string>
     <string name="preference_file_key">PREFERENCE_FILE_KEY</string>
@@ -19,4 +20,6 @@
     <string name="app_twitter_credential">demoapp2.twitter.credential</string>
     <string name="app_twitter_token">demoapp2.twitter.token</string>
     <string name="app_twitter_secret">demoapp2.twitter.secret</string>
+    <string name="app_twitter_name">demoapp2.twitter.name</string>
+
 </resources>
