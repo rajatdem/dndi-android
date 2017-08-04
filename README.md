@@ -79,9 +79,41 @@ specify how to implement one's own business logic when there is a keyword match 
 
 specify the rules one has to abide by if one would like to create one's own zirk
 
-### Update the keyword-category map 
+### Update the keyword-category map
 
-specify how to update keywords in the framework
+Keywords are stored in a JSON file as part of the Android application. These are used by the textual normalization
+Zirk to compare them with the sensor data feed of the user. The keywords are categorized under a category.
+
+_Sub categories not supported yet by the Text Normalization Zirk_
+
+Create a file called ```keywords.json``` in your Android project.
+This can be created under **main/res/raw/keywords.json** folder in the Android project.
+
+You can create multiple entities falling under one broader category of entities
+
+Format of the JSON file
+
+```
+[
+  {
+    "category": "@CATEGORY_NAME_1" ,
+    "keywords": [
+      "ENTITY_1",
+      "ENTITY_2",
+      . . . .
+    ]
+  },
+  . . . .
+  {
+    "category": "@CATEGORY_NAME_2" ,
+    "keywords": [
+      "ENTITY_1",
+      "ENTITY_2",
+      . . . .
+    ]
+  }
+]
+```
 
 ### Test the new components
 
