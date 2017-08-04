@@ -37,6 +37,23 @@ Also call the method for listening to events from the ```ZirkManagerService clas
 ![bezirkListener](https://github.com/stormysun513/dndi-android/blob/rajatdem/documents/images/bezirkListener.png)
 This method implements handling of the ```CommandEvent``` received by the sensor Zirk from ```ZirkManagerService```
 Different flow of execution can be accomodated depending on the type of Mode received by the Zirk. 
+- Implement a ```sendMessage() method``` to send Bezirk Events to Normalization Zirks from the Data Gathering Zirk
+```Java
+public void sendMessage () {
+        rawData = new RawData();
+        rawData.setLocation(""); //Optional: Can be null
+        rawData.setDate(""); //Optional: Can be null
+        rawData.setText(""); //Optional: Can be null
+        //Create a RawDataEvent with the current mode of operation
+        RawDataEvent rawDataEvent = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
+        //Pack RawData
+        rawDataEvent.appendRawData(rawData);
+        event.hasLocation = true;
+        event.hasText = true;
+        //Send RawDataEvent over Bezirk Middleware to the Normalization Zirk
+        bezirk.sendEvent(rawDataEvent);
+    }
+```
 
 ### Configure access token for data gathering zirk (if required)
 
