@@ -94,14 +94,14 @@ public class SearchOnYelpTask extends AsyncTask<YelpSearchParameter, Void, Void>
         if(param == null){
             // default location is set around the campus
 //            map.put("term", "indian");
-//            map.put("latitude", "40.581140");
-//            map.put("longitude", "-111.914184");
             map.put("latitude", "40.442570");
             map.put("longitude", "-79.945676");
             map.put("limit", "50");
         }
         else{
-            map.put("term", "chinese");
+            if(param.query != null){
+                map.put("term", param.query);
+            }
             map.put("latitude", Double.toString(param.location.getLatitude()));
             map.put("longitude", Double.toString(param.location.getLongitude()));
             map.put("limit", "50");

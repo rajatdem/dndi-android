@@ -22,6 +22,16 @@
     ]
   },
   {
+    "category":"american food",
+    "keywords":[
+      "fries",
+      "burger",
+      "pizza",
+      "coke",
+      "ice cream"
+    ]
+  },
+  {
     "category":"taiwanese food",
     "keywords":[
       "bubble tea",

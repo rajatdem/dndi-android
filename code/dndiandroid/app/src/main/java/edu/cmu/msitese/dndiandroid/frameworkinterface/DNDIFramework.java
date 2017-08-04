@@ -74,7 +74,6 @@ public class DNDIFramework {
         public void onReceive(Context context, Intent intent) {
 
             String result = intent.getStringExtra(RESULT);
-
             switch (result){
                 case KEYWORD_MATCHED:
                     ArrayList<String> keywords = intent.getStringArrayListExtra(KEYWORD_MATCHED);

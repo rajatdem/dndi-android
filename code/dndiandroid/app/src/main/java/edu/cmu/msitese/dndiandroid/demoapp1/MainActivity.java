@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     @Override
-    public void onKeywordMatch(List<String> keywords) {
+    public void onKeywordMatch(List<String> categories) {
 
-        String result = TextUtils.join(", ", keywords);
+        String result = TextUtils.join(", ", categories);
 
         // generate a list of topics
         sendNotification(result);

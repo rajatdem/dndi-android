@@ -18,8 +18,11 @@ import edu.cmu.msitese.dndiandroid.R;
 
 public class RestaurantInfoListAdapter extends ArrayAdapter<RestaurantInfoCell> {
 
+    private Context mContext;
+
     public RestaurantInfoListAdapter(Context context, List<RestaurantInfoCell> restaurants) {
         super(context, 0, restaurants);
+        mContext = context;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class RestaurantInfoListAdapter extends ArrayAdapter<RestaurantInfoCell> 
         if(viewHolder.bitmap == null){
             // get corresponding profile URL asynchronously
             viewHolder.imageUrl = cell.getImageUrl();
-            new GetImageInViewHolderTask().execute(viewHolder);
+            new GetImageInViewHolderTask(mContext).execute(viewHolder);
         }
         else{
             viewHolder.imageView.setImageBitmap(viewHolder.bitmap);
