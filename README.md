@@ -16,9 +16,23 @@ specify how to include the framework and run along with the android project
 
 ## Example
 
-### Build a new data preparation zirk
+### Build a new data preparation Zirk
 
 specify how to plug in a new data preparation unit made by developer into the framework
+
+- Install Android Studio [Android Studio Setup](https://developer.android.com/studio/intro/migrate.html)
+- Import the project in Android Studio. 
+- Create a new package under ```edu.cmu.msitese.dndiandroid.datagathering``` with the name of the sensor source.
+- Create a new Android Service by
+   **Right click on the new package created --> New --> Service --> Service**
+- This creates a new Java class in the package. Name it as ```[SensorName]Service.java```.
+- Implement ```ZirkEndPoint interface``` and ensure the class extends the ```Service class```
+- Create a TAG for the class. This helps in logging and debugging later
+This can be done by creating a field in the class.
+```private static final String TAG = "LocationDataGathrngZirk";```
+- Override the ```onCreate()``` method of the service and register the Zirk to the Bezirk Middleware.
+Also call the method for listening to events from the ```ZirkManagerService class```, which sends the mode of operation to the respective Zirks.
+![onCreate()](https://github.com/stormysun513/dndi-android/blob/rajatdem/documents/images/onCreate%20in%20Zirk.png)
 
 ### Configure access token for data gathering zirk (if required)
 
