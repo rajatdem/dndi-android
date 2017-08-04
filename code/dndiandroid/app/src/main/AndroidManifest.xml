@@ -34,6 +34,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".demoapp2.MainActivity" android:screenOrientation="portrait"></activity>
 
         <!-- all zirks -->
         <service android:name="edu.cmu.msitese.dndiandroid.frameworkinterface.ZirkManagerService" android:stopWithTask="true"/>
