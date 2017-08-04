@@ -20,9 +20,10 @@ view diagrams
 
 ## Dependencies
 
-[Yu-Lun](https://github.com/stormysun513/)
-
-include all third-party libraries required to build the project
+- twitter4j (4.0.6)
+- android-zirk-proxy (3.2.0-snapshot)
+- google-play-services (11.0.1)
+- ranga543/yelp-fusion-client (0.1.2)
 
 ## Installation
 
@@ -137,28 +138,27 @@ Any application related events (e.g. KEYWORD\_MATCH, LOCATION\_UPDATE) will be c
 ```java
 // the broadcast receiver callback that parse the intent and call corresponding callback functions
 private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		
-		String result = intent.getStringExtra(RESULT);
-		switch (result){
-			case KEYWORD_MATCHED:
-				ArrayList<String> keywords = intent.getStringArrayListExtra(KEYWORD_MATCHED);
-				if(mContext instanceof DNDIFrameworkListener){
-					((DNDIFrameworkListener) mContext).onKeywordMatch(keywords);
-				}
-				break;
-			case RAW_LOCATION:
-				Location location = intent.getParcelableExtra(RAW_LOCATION);
-				if(mContext instanceof DNDIFrameworkListener){
-					((DNDIFrameworkListener) mContext).onLastLocationUpdate(location);
-				}
-				break;
-			case ERROR:
-			default:
-				break;
-		}
-	}
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        String result = intent.getStringExtra(RESULT);
+        switch (result){
+            case KEYWORD_MATCHED:
+            ArrayList<String> keywords = intent.getStringArrayListExtra(KEYWORD_MATCHED);
+            if(mContext instanceof DNDIFrameworkListener){
+                ((DNDIFrameworkListener) mContext).onKeywordMatch(keywords);
+            }
+            break;
+        case RAW_LOCATION:
+            Location location = intent.getParcelableExtra(RAW_LOCATION);
+            if(mContext instanceof DNDIFrameworkListener){
+                ((DNDIFrameworkListener) mContext).onLastLocationUpdate(location);
+            }
+            break;
+        case ERROR:
+        default:
+            break;
+        }
+    }
 };
 ```
 
@@ -225,38 +225,38 @@ Each testcase has its own context, so one has to initialize the bezirk middlewar
 ```java
 @Test(timeout = 30000)
 public void testKeywordMatchEvent() throws InterruptedException {
-	// initialize the Bezirk service for testing
-	BezirkMiddleware.initialize(getContext());
+    // initialize the Bezirk service for testing
+    BezirkMiddleware.initialize(getContext());
 	
-	// sync object used to check whether timertask completes before the timeout budget
-	final Object syncObject = new Object();
+    // sync object used to check whether timertask completes before the timeout budget
+    final Object syncObject = new Object();
 	
-	new Timer().schedule(new TimerTask() {
-		@Override
-		public void run() {
+    new Timer().schedule(new TimerTask() {
+        @Override
+        public void run() {
 	
-			// Bind the service and grab a reference to the binder.
-			IBinder binder = bindService(new Intent(getContext(), KeywordMatchService.class));
-			assertNotNull(binder);
+            // Bind the service and grab a reference to the binder.
+            IBinder binder = bindService(new Intent(getContext(), KeywordMatchService.class));
+            assertNotNull(binder);
 		
-			// Get service instances
-			KeywordMatchService service = ((KeywordMatchService.KeywordMatchServiceBinder) binder).getService();
-			assertNotNull(service);
+            // Get service instances
+            KeywordMatchService service = ((KeywordMatchService.KeywordMatchServiceBinder) binder).getService();
+            assertNotNull(service);
 
-			// TODO: add testing logic here
+            // TODO: add testing logic here
 		
-			BezirkMiddleware.stop();
+            BezirkMiddleware.stop();
 			
-			synchronized (syncObject) {
-				syncObject.notify();
-			}
-		}
-	}, 1000);
+            synchronized (syncObject) {
+                syncObject.notify();
+            }
+        }
+    }, 1000);
 	
-	// wait for timertask to complete
-	synchronized (syncObject) {
-		syncObject.wait();
-	}
+    // wait for timertask to complete
+    synchronized (syncObject) {
+        syncObject.wait();
+    }
 }
 ```
 
@@ -273,20 +273,20 @@ When an applicaiton is removed from the foreground, the `onPause` function is ca
 ```java
 @Override
 protected void onResume(){
-	super.onResume();
-	dndi.resume();
+    super.onResume();
+    dndi.resume();
 }
 
 @Override
 protected void onPause(){
-	dndi.pause();
-	super.onPause();
+    dndi.pause();
+    super.onPause();
 }
 
 @Override
 protected void onDestroy(){
-	dndi.stop();
-	super.onDestroy();
+    dndi.stop();
+    super.onDestroy();
 }
 ```
 
