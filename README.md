@@ -33,6 +33,10 @@ This can be done by creating a field in the class.
 - Override the ```onCreate()``` method of the service and register the Zirk to the Bezirk Middleware.
 Also call the method for listening to events from the ```ZirkManagerService class```, which sends the mode of operation to the respective Zirks.
 ![onCreate()](https://github.com/stormysun513/dndi-android/blob/rajatdem/documents/images/onCreate%20in%20Zirk.png)
+- Implement the ```bezirkListener() method```
+![bezirkListener](https://github.com/stormysun513/dndi-android/blob/rajatdem/documents/images/bezirkListener.png)
+This method implements handling of the ```CommandEvent``` received by the sensor Zirk from ```ZirkManagerService```
+Different flow of execution can be accomodated depending on the type of Mode received by the Zirk. 
 
 ### Configure access token for data gathering zirk (if required)
 
