@@ -103,7 +103,7 @@ public class DNDIFramework {
         bindToConfigService();
     }
 
-    class CheckZirkManagerInitialization extends TimerTask{
+    class CheckZirkManagerInitialization extends TimerTask {
 
         @Override
         public void run() {
@@ -202,7 +202,11 @@ public class DNDIFramework {
     public void configTwitterCredential(String token, String secret, String id){
         if (isConnected) {
             JSONObject jsonObject = Utils.packCredentialToJSON(token, secret, id);
-            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_CONFIG_API_KEY, jsonObject.toString());
+            final CommandEvent evt = new CommandEvent(
+                    mContext.getString(R.string.target_twitter),
+                    CommandEvent.CmdType.CMD_CONFIG_API_KEY,
+                    jsonObject.toString()
+            );
             mZirkManagerService.sendBezirkEvent(evt);
         }
     }

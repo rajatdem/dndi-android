@@ -12,6 +12,8 @@ import com.bezirk.middleware.messages.EventSet;
 
 import org.junit.Test;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeoutException;
 
 import edu.cmu.msitese.dndiandroid.event.KeywordMatchEvent;
@@ -76,36 +78,59 @@ public class ZirkManagerServiceTest extends ServiceTestCase<ZirkManagerService> 
         IBinder binder = bindService(new Intent(getContext(), ZirkManagerService.class));
 
         // Get the service handle
-        ZirkManagerService service = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
+        final ZirkManagerService service = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
         assertNotNull(service);
 
-        final Object syncObject = new Object();
-        EventSet.EventReceiver old = service.getEventSetSubscriptionHandler();
+        final Object syncObject1 = new Object();
 
-        // set eventSet receiver handler
-        service.setEventSetSubscriptionHandler(new EventSet.EventReceiver(){
+        new Timer().schedule(new TimerTask() {
             @Override
-            public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
-                if(event instanceof KeywordMatchEvent){
-                    synchronized (syncObject){
-                        syncObject.notify();
+            public void run() {
+
+                EventSet.EventReceiver old = service.getEventSetSubscriptionHandler();
+
+                final Object syncObject2 = new Object();
+
+                // set eventSet receiver handler
+                service.setEventSetSubscriptionHandler(new EventSet.EventReceiver(){
+                    @Override
+                    public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
+                        if(event instanceof KeywordMatchEvent){
+                            synchronized (syncObject2){
+                                syncObject2.notify();
+                            }
+                        }
                     }
+                });
+
+                // send a bezirk message here
+                Bezirk realBezirk = BezirkMiddleware.registerZirk("TestZirk");
+                final KeywordMatchEvent dummyEvent = new KeywordMatchEvent();
+                realBezirk.sendEvent(dummyEvent);
+
+                try {
+                    // wait for callback function
+                    synchronized (syncObject2) {
+                        syncObject2.wait();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    fail();
+                }
+                service.setEventSetSubscriptionHandler(old);
+
+                // unregister testing zirk
+                realBezirk.unregisterZirk();
+
+                synchronized (syncObject1) {
+                    syncObject1.notify();
                 }
             }
-        });
+        }, 2000);
 
-        // send a bezirk message here
-        Bezirk realBezirk = BezirkMiddleware.registerZirk("UnitTestZirk");
-        final KeywordMatchEvent dummyEvent = new KeywordMatchEvent();
-        realBezirk.sendEvent(dummyEvent);
-
-        // wait for callback function
-        synchronized (syncObject){
-            syncObject.wait();
+        // wait for timertask to complete
+        synchronized (syncObject1) {
+            syncObject1.wait();
         }
-        service.setEventSetSubscriptionHandler(old);
-
-        // unregister testing zirk
-        realBezirk.unregisterZirk();
     }
 }

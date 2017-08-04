@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void periodicGPS(View view){
+
         int num;
         try{
             num = Integer.valueOf(mEditTestInput.getText().toString());

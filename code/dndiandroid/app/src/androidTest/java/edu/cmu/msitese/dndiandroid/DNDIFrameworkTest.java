@@ -32,7 +32,7 @@ public class DNDIFrameworkTest  {
 
         // initialize the DNDIFramework
         DNDIFramework dndi = new DNDIFramework(InstrumentationRegistry.getTargetContext());
-        Thread.sleep(2000);
+        Thread.sleep(4000);
         assertTrue(dndi.ready());
 
         Bezirk bezirk = BezirkMiddleware.registerZirk("TestZirk");
@@ -89,7 +89,7 @@ public class DNDIFrameworkTest  {
 
         // stop the dndi
         dndi.stop();
-        Thread.sleep(5000);
+        Thread.sleep(4000);
         assertFalse(dndi.ready());
 
         // close the bezirk interface

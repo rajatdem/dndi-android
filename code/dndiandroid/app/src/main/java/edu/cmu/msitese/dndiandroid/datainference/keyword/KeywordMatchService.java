@@ -95,7 +95,7 @@ public class KeywordMatchService extends Service {
         // if there is a match, it will append the match category at the end of the keywordMatchEvent
         // send it back to the configService
         for(RawData data: array){
-            String[] tokens = data.getText().split("\\s+");
+            String[] tokens = data.getText().toLowerCase().split("\\s+");
             for(String token: tokens){
                 if(mKeywordMap.containsKey(token)){
                     String category = mKeywordMap.get(token);

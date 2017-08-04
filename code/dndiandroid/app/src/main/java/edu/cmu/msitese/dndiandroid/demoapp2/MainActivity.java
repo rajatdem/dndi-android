@@ -28,7 +28,8 @@ public class MainActivity extends AppCompatActivity implements
     private static final String TAG = "YELP_DEMO";
 
     private static final String APPBAR_TITLE = "Restaurant";
-    private static final float MIN_DISTANCE_DELTA = 1.5f;
+    private static final float MIN_DISTANCE_DELTA = 100f; // 100 meters
+    private static final int PULL_TWEET_DELAY = 500;
     private static final int UPDATE_DELAY = 5000;
 
     private DNDIFramework dndi;
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onInitializationCompleted() {
-        dndi.pullTweetInBatchAll();
+        new Timer().schedule(new DelayPullTweet(), PULL_TWEET_DELAY);
     }
 
     @Override
@@ -156,9 +157,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onKeywordMatch(List<String> categories) {
 
-        Log.i(TAG, "category update");
         // always retrieve the first one as query
         String category = categories.get(0);
+
+        Log.i(TAG, String.format("category update: %s", category));
         if(mLastLocation != null){
             if(!category.equals(mLastCategory)){
                 // TODO: update the list view
@@ -208,6 +210,14 @@ public class MainActivity extends AppCompatActivity implements
                 params.location = location;
                 new SearchOnYelpTask(this).execute(params);
             }
+        }
+    }
+
+    class DelayPullTweet extends TimerTask {
+
+        @Override
+        public void run() {
+            dndi.pullTweetInBatchAll();
         }
     }
 

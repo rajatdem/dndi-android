@@ -9,6 +9,9 @@ import com.bezirk.middleware.android.BezirkMiddleware;
 
 import org.junit.Test;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordCountDao;
 import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordMatchService;
 import edu.cmu.msitese.dndiandroid.event.RawData;
@@ -32,56 +35,79 @@ public class KeywordMatchServiceTest extends ServiceTestCase<KeywordMatchService
     }
 
     @Test(timeout = 30000)
-    public void testTwitterModeSelectionAndOperation() throws InterruptedException {
+    public void testKeywordMatchEvent() throws InterruptedException {
 
         // initialize the Bezirk service for testing
         BezirkMiddleware.initialize(getContext());
 
-        // Bind the service and grab a reference to the binder.
-        IBinder binder = bindService(new Intent(getContext(), KeywordMatchService.class));
-        assertNotNull(binder);
+        // sync object used to check whether timertask completes before the timeout budget
+        final Object syncObject = new Object();
 
-        // Get service instances
-        KeywordMatchService service = ((KeywordMatchService.KeywordMatchServiceBinder) binder).getService();
-        assertNotNull(service);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
 
-        // perform dependency injection to replace original dao
-        KeywordCountDao origDao = service.getKeywordCountDaoInstance();
-        KeywordCountDao mockDao = mock(KeywordCountDao.class);
-        doNothing().when(mockDao).addOrUpdateKeywordCount(any(String.class), any(String.class));
+                // Bind the service and grab a reference to the binder.
+                IBinder binder = bindService(new Intent(getContext(), KeywordMatchService.class));
+                assertNotNull(binder);
 
-        KeywordCountDao spyDao = spy(mockDao);
-        service.setKeywordCountDaoInstance(spyDao);
+                // Get service instances
+                KeywordMatchService service = ((KeywordMatchService.KeywordMatchServiceBinder) binder).getService();
+                assertNotNull(service);
 
-        // create a set of testing keyword and category
-        String fakeKeyword = getClass().getName();
-        String fakeCategory = getClass().getSimpleName();
-        String origCategory = service.getKeywordCategory(fakeKeyword);
+                // perform dependency injection to replace original dao
+                KeywordCountDao origDao = service.getKeywordCountDaoInstance();
+                KeywordCountDao mockDao = mock(KeywordCountDao.class);
+                doNothing().when(mockDao).addOrUpdateKeywordCount(any(String.class), any(String.class));
 
-        service.insertKeywordCategoryPair(fakeKeyword, fakeCategory);
+                KeywordCountDao spyDao = spy(mockDao);
+                service.setKeywordCountDaoInstance(spyDao);
 
-        String fakeTweet = "test a keyword " + fakeKeyword;
-        final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
-        event.hasText = true;
-        RawData data = new RawData();
-        data.setText(fakeTweet);
-        event.appendRawData(data);
+                // create a set of testing keyword and category
+                String fakeKeyword = getClass().getName().toLowerCase();
+                String fakeCategory = getClass().getSimpleName().toLowerCase();
+                String origCategory = service.getKeywordCategory(fakeKeyword);
 
-        Bezirk bezirk = BezirkMiddleware.registerZirk("TestZirk");
-        bezirk.sendEvent(event);
+                service.insertKeywordCategoryPair(fakeKeyword, fakeCategory);
 
-        // there must be a keyword matcc, which will call  dao.addOrUpdateKeywordCount()
-        Thread.sleep(2000);
-        verify(spyDao, times(1)).addOrUpdateKeywordCount(any(String.class), any(String.class));
+                String fakeTweet = "test a keyword " + fakeKeyword;
+                final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
+                event.hasText = true;
+                RawData data = new RawData();
+                data.setText(fakeTweet);
+                event.appendRawData(data);
 
-        // resume the original keyword dao object
-        service.setKeywordCountDaoInstance(origDao);
+                Bezirk bezirk = BezirkMiddleware.registerZirk("TestZirk");
+                bezirk.sendEvent(event);
 
-        // resume keyword map in KeywordMatchService
-        service.resumeKeywordCategoryPair(fakeKeyword, origCategory);
+                // there must be a keyword match, which will call  dao.addOrUpdateKeywordCount()
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    fail();
+                }
+                verify(spyDao, times(1)).addOrUpdateKeywordCount(any(String.class), any(String.class));
 
-        // close bezirk at the end
-        bezirk.unregisterZirk();
-        BezirkMiddleware.stop();
+                // resume the original keyword dao object
+                service.setKeywordCountDaoInstance(origDao);
+
+                // resume keyword map in KeywordMatchService
+                service.resumeKeywordCategoryPair(fakeKeyword, origCategory);
+
+                // close bezirk at the end
+                bezirk.unregisterZirk();
+                BezirkMiddleware.stop();
+
+                synchronized (syncObject) {
+                    syncObject.notify();
+                }
+            }
+        }, 1000);
+
+        // wait for timertask to complete
+        synchronized (syncObject) {
+            syncObject.wait();
+        }
     }
 }
