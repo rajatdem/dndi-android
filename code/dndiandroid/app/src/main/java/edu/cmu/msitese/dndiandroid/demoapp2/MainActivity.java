@@ -89,12 +89,7 @@ public class MainActivity extends AppCompatActivity implements
                 new PostTwitterTask(MainActivity.this).execute(input);
             }
         });
-
         alert.show();
-    }
-
-    private void pullUserHistoricalTweets(){
-        dndi.pullTweetInBatchAll();
     }
 
     @Override
@@ -117,12 +112,18 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onPostTaskFailed(String message) {
-        Log.i(TAG, "failed to post a tweet: " + message);
+        Log.e(TAG, "failed to post a tweet: " + message);
     }
 
     @Override
     public void onInitializationCompleted() {
         Log.i(TAG, "the dndi is initialized successfully");
+//        dndi.pullTweetInBatchAll();
+    }
+
+    @Override
+    public void onInitializationTimeout() {
+
     }
 
     @Override

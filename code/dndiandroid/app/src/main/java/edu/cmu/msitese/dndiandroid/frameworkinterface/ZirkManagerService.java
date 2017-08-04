@@ -45,7 +45,7 @@ public class ZirkManagerService extends Service {
     private static final int BEZIRK_INITIALIZATION_DELAY = 1500;
     public static final String ACTION = "edu.cmu.msitese.dndiandroid.ZirkManagerService";
 
-    private Bezirk bezirk;
+    private Bezirk bezirk = null;
     private final EventSet eventSet = new EventSet(
             KeywordMatchEvent.class,
             RawDataEvent.class
@@ -74,9 +74,11 @@ public class ZirkManagerService extends Service {
 
         @Override
         public void run() {
+
             // register with Bezirk middleware to get an instance of Bezirk API.
             bezirk = BezirkMiddleware.registerZirk("ZirkManager");
 
+            // register callbacks
             eventSet.setEventReceiver(new EventSet.EventReceiver() {
 
                 @Override
@@ -85,8 +87,8 @@ public class ZirkManagerService extends Service {
                     if (event instanceof KeywordMatchEvent) {
                         final KeywordMatchEvent keywordMatchEvent = (KeywordMatchEvent) event;
                         Intent intent = new Intent(ACTION);
-                        intent.putExtra(getString(R.string.intent_result), DNDIFramework.KEYWORD_MATCH);
-                        intent.putStringArrayListExtra(getString(R.string.intent_result_keyword), keywordMatchEvent.getMatchList());
+                        intent.putExtra(DNDIFramework.RESULT, DNDIFramework.KEYWORD_MATCHED);
+                        intent.putStringArrayListExtra(DNDIFramework.KEYWORD_MATCHED, keywordMatchEvent.getMatchList());
                         LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
                     }
                     else if(event instanceof RawDataEvent) {
@@ -97,8 +99,8 @@ public class ZirkManagerService extends Service {
                                 Location location = getLocationStringFromJSONRaw(data.getLocation());
                                 if(location != null){
                                     Intent intent = new Intent(ACTION);
-                                    intent.putExtra(getString(R.string.intent_result), DNDIFramework.RAW_LOCATION);
-                                    intent.putExtra(getString(R.string.intent_result_raw_location), location);
+                                    intent.putExtra(DNDIFramework.RESULT, DNDIFramework.RAW_LOCATION);
+                                    intent.putExtra(DNDIFramework.RAW_LOCATION, location);
                                     LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
                                 }
                             }
@@ -124,6 +126,10 @@ public class ZirkManagerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    public boolean isBezirkInitialized(){
+        return bezirk != null;
     }
 
     public void sendBezirkEvent(Event evt) {

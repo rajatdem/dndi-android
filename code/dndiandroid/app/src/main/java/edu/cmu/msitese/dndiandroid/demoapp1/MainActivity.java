@@ -67,6 +67,11 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     @Override
+    public void onInitializationTimeout() {
+
+    }
+
+    @Override
     public void onKeywordMatch(List<String> keywords) {
 
         String result = TextUtils.join(", ", keywords);

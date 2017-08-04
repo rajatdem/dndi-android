@@ -19,6 +19,8 @@ import edu.cmu.msitese.dndiandroid.Utils;
 import edu.cmu.msitese.dndiandroid.event.CommandEvent;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Yu-Lun Tsai on 07/06/2017.
@@ -29,15 +31,23 @@ public class DNDIFramework {
     // static tag with string type used for filtering console output
     private static final String TAG = "ZIRK";
 
-    // members used for interact with the config service
-    public static final String KEYWORD_MATCH = "cmu.edu.msitese.dndiandroid.DNDIFramework.MATCH_EVENT";
-    public static final String RAW_LOCATION = "cmu.edu.msitese.dndiandroid.DNDIFramework.RAW_LOCATION";
-    public static final String ERROR = "cmu.edu.msitese.dndiandroid.DNDIFramework.ERROR";
+    // constants used to check whether bezirk is initialized
+    private static final int CHECK_BEZIRK_DELAY = 100;
+    private static final int CHECK_BEZIRK_PERIOD = 1000;
+    private static final int MAXIMUM_CHECK_FAIL = 5;
 
-    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+    // members used for interact with the config service
+    public static final String RESULT = "DNDIFramework.result";
+    public static final String KEYWORD_MATCHED = "DNDIFramework.result.KEYWORD_MATCHED";
+    public static final String RAW_LOCATION = "DNDIFramework.result.RAW_LOCATION";
+    public static final String MANAGER_INITIALIZED = "DNDIFramework.result.MANAGER_INITIALIZED";
+    public static final String ERROR = "DNDIFramework.result.ERROR";
+
     private Context mContext;
     private ZirkManagerService mZirkManagerService;
-    private boolean isBound = false;
+    private Timer mTimer;
+    private int timerCount;
+    private boolean isConnected = false;
 
     // the service connection callback, it will get the service instance once the binding is completed
     private ServiceConnection mServerConn = new ServiceConnection() {
@@ -45,15 +55,14 @@ public class DNDIFramework {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             mZirkManagerService = ((ZirkManagerService.ZirkManagerServiceBinder) binder).getService();
-            isBound = true;
-            if(mContext instanceof DNDIFrameworkListener){
-                ((DNDIFrameworkListener) mContext).onInitializationCompleted();
-            }
+            timerCount = 0;
+            mTimer = new Timer();
+            mTimer.schedule(new CheckZirkManagerInitialization(), CHECK_BEZIRK_DELAY, CHECK_BEZIRK_PERIOD);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            isBound = false;
+            isConnected = false;
         }
     };
 
@@ -64,19 +73,17 @@ public class DNDIFramework {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            String result = intent.getStringExtra(mContext.getString(R.string.intent_result));
+            String result = intent.getStringExtra(RESULT);
 
             switch (result){
-                case KEYWORD_MATCH:
-                    ArrayList<String> keywords = intent.getStringArrayListExtra(
-                            mContext.getString(R.string.intent_result_keyword));
+                case KEYWORD_MATCHED:
+                    ArrayList<String> keywords = intent.getStringArrayListExtra(KEYWORD_MATCHED);
                     if(mContext instanceof DNDIFrameworkListener){
                         ((DNDIFrameworkListener) mContext).onKeywordMatch(keywords);
                     }
                     break;
                 case RAW_LOCATION:
-                    Location location = intent.getParcelableExtra(
-                            mContext.getString(R.string.intent_result_raw_location));
+                    Location location = intent.getParcelableExtra(RAW_LOCATION);
                     if(mContext instanceof DNDIFrameworkListener){
                         ((DNDIFrameworkListener) mContext).onLastLocationUpdate(location);
                     }
@@ -92,8 +99,32 @@ public class DNDIFramework {
     // DNDIFramework constructor, the user should at least specify the context for it
     public DNDIFramework(Context context){
         this.mContext = context;
+
+        // bind to the ZirkManagerService
         bindToConfigService();
     }
+
+    class CheckZirkManagerInitialization extends TimerTask{
+
+        @Override
+        public void run() {
+            if(mZirkManagerService.isBezirkInitialized()){
+                isConnected = true;
+                mTimer.cancel();
+                mTimer.purge();
+                if(mContext instanceof DNDIFrameworkListener){
+                    ((DNDIFrameworkListener) mContext).onInitializationCompleted();
+                }
+            }
+            else{
+                timerCount++;
+                if(timerCount > MAXIMUM_CHECK_FAIL){
+                    // TODO: a callback to notify main activity that connection failed
+                }
+            }
+        }
+    }
+
 
     // bind to the broadcast sent by config service
     public void resume(){
@@ -110,19 +141,19 @@ public class DNDIFramework {
 
     // unbind the config service
     public void stop(){
-        if(isBound){
+        if(isConnected){
             mContext.unbindService(mServerConn);
-            isBound = false;
+            isConnected = false;
         }
     }
 
     // return true if the DNDI framework is ready to be interacted with
     public boolean ready(){
-        return isBound;
+        return isConnected;
     }
 
     public void pullTweetInBatchAll(){
-        if (isBound) {
+        if (isConnected) {
             final CommandEvent evt = new CommandEvent(mContext.getString(R.string.target_twitter),
                     CommandEvent.CmdType.CMD_PULL);
 
@@ -131,7 +162,7 @@ public class DNDIFramework {
     }
 
     public void pullTweetInBatchByNum(int num){
-        if (isBound) {
+        if (isConnected) {
             final CommandEvent evt = new CommandEvent(mContext.getString(R.string.target_twitter),
                     CommandEvent.CmdType.CMD_PULL, Integer.toString(num));
             mZirkManagerService.sendBezirkEvent(evt);
@@ -139,7 +170,7 @@ public class DNDIFramework {
     }
 
     public void configTwitterEventMode(){
-        if (isBound) {
+        if (isConnected) {
             final CommandEvent evt = new CommandEvent(mContext.getString(R.string.target_twitter),
                     CommandEvent.CmdType.CMD_EVENT);
             mZirkManagerService.sendBezirkEvent(evt);
@@ -147,7 +178,7 @@ public class DNDIFramework {
     }
 
     public void configTwitterPeriodicMode(int period){
-        if (isBound) {
+        if (isConnected) {
             final CommandEvent evt = new CommandEvent(mContext.getString(R.string.target_twitter),
                     CommandEvent.CmdType.CMD_PERIODIC, Integer.toString(period));
             mZirkManagerService.sendBezirkEvent(evt);
@@ -155,14 +186,14 @@ public class DNDIFramework {
     }
 
     public void periodicGPS(int period){
-        if (isBound) {
+        if (isConnected) {
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PERIODIC, Integer.toString(period));
             mZirkManagerService.sendBezirkEvent(evt);
         }
     }
 
     public void eventGPS(int shortestDist){
-        if (isBound) {
+        if (isConnected) {
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_EVENT, Integer.toString(shortestDist));
             mZirkManagerService.sendBezirkEvent(evt);
         }
@@ -170,7 +201,7 @@ public class DNDIFramework {
 
     // send twitter credential through the bezirk middleware
     public void configTwitterCredential(String token, String secret, String id){
-        if (isBound) {
+        if (isConnected) {
             JSONObject jsonObject = Utils.packCredentialToJSON(token, secret, id);
             final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_CONFIG_API_KEY, jsonObject.toString());
             mZirkManagerService.sendBezirkEvent(evt);
