@@ -14,6 +14,7 @@ import android.location.Location;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -34,6 +35,7 @@ import com.google.android.gms.tasks.Task;
 
 
 import edu.cmu.msitese.dndiandroid.Utils;
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
 import edu.cmu.msitese.dndiandroid.event.CommandEvent;
 import edu.cmu.msitese.dndiandroid.event.RawData;
 import edu.cmu.msitese.dndiandroid.event.RawDataEvent;
@@ -51,33 +53,36 @@ import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
 public class LocationDataService extends Service implements ZirkEndPoint {
 
+    //Constants
     private static final String TAG = "LocationDataGathrngZirk";
-    private final IBinder mBinder = new LocationDataServiceBinder();
-
     /*
-     * Choose the constant values for use
-     * INTERVAL and FAST_INTERVAL in ms
-     * DISPLACEMENT in m
-     */
+    * Choose the constant values for use
+    * INTERVAL and FAST_INTERVAL in ms
+    * DISPLACEMENT in m
+    */
     private static long INTERVAL = 30000; //30secs default
     private static long FAST_INTERVAL = 30000; //30secs default
     private static long DISPLACEMENT = 1000; //1000metres default
     private static String mode = "NONE";
 
+    //Service binding related fields
+    private final IBinder mBinder = new LocationDataServiceBinder();
+
+    private Boolean status;
+    private static Boolean update = true;
+
+    //Bezirk Related fields
     private Bezirk bezirk;
     private RawData rawData;
     private RawDataEvent event;
-    private String latitude;
-    private String longitude;
-    private Boolean status;
-    private static Boolean update = true;
-    private static CommandEvent cmdEvent;
+    private EventSet eventSet = new EventSet(CommandEvent.class);
 
     //Location Related fields. From Play Services Location Framework
+    private String latitude;
+    private String longitude;
     private Location mLastLocation;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest mLocationRequestEvent = new LocationRequest();
-    ;
     private LocationRequest mLocationRequestPeriodic = new LocationRequest();
     private LocationCallback mLocationCallback;
 
@@ -88,11 +93,9 @@ public class LocationDataService extends Service implements ZirkEndPoint {
     @Override
     public void onCreate() {
         super.onCreate();
-
-//        BezirkMiddleware.initialize(this);
         bezirk = BezirkMiddleware.registerZirk("LocationGathering");
-        EventSet eventSet = new EventSet(CommandEvent.class);
-        bezirkListener(eventSet);
+
+        bezirkListener();
         createLocationRequestEvent();
         createLocationRequestPeriodic();
         createLocationCallBack();
@@ -132,7 +135,6 @@ public class LocationDataService extends Service implements ZirkEndPoint {
         return START_NOT_STICKY;
     }
 
-    //public int onStartCommand(Intent intent, int flags, int startId)
     public void checkLocationPermission(Intent intent) {
         // Let it continue running until it is stopped.
 //        Toast.makeText(this, "GPS Service Started", Toast.LENGTH_LONG).show();
@@ -230,8 +232,6 @@ public class LocationDataService extends Service implements ZirkEndPoint {
         return super.stopService(name);
     }
 
-    // Warnings suppressed as this path will be taken only after permission check done in the
-    // onStartCommand
     private void getLocationUpdatesEvent() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED &&
@@ -268,10 +268,10 @@ public class LocationDataService extends Service implements ZirkEndPoint {
         return mBinder;
     }
 
-    public void sendMessage(){
+    public void sendMessage() {
         //getLastLocation();
         rawData = new RawData();
-        rawData.setLocation("{\"latitude\":\""+latitude+"\",\"longitude\":\""+longitude+"\"}");
+        rawData.setLocation("{\"latitude\":\"" + latitude + "\",\"longitude\":\"" + longitude + "\"}");
         Log.i(TAG, "Sending over the Middleware");
         Log.i(TAG, latitude);
         Log.i(TAG, longitude);
@@ -281,40 +281,44 @@ public class LocationDataService extends Service implements ZirkEndPoint {
         bezirk.sendEvent(event);
     }
 
-    public void sendEmptyMessage(){
+    public void sendEmptyMessage() {
         rawData = new RawData();
         event = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
         bezirk.sendEvent(event);
     }
 
-    public class LocationDataServiceBinder extends Binder{
+    public class LocationDataServiceBinder extends Binder {
         LocationDataService getService() {
             return LocationDataService.this;
         }
     }
 
-    @SuppressWarnings("MissingPermission")
     private void getLocation() {
-        mFusedLocationClient.getLastLocation()
-                .addOnCompleteListener(new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(Task<Location> task) {
-                        mLastLocation = task.getResult();
-                        if(mLastLocation != null) {
-                            latitude = String.valueOf(mLastLocation.getLatitude());
-                            longitude = String.valueOf(mLastLocation.getLongitude());
-                            sendMessage();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.getLastLocation()
+                    .addOnCompleteListener(new OnCompleteListener<Location>() {
+                        @Override
+                        public void onComplete(Task<Location> task) {
+                            mLastLocation = task.getResult();
+                            if (mLastLocation != null) {
+                                latitude = String.valueOf(mLastLocation.getLatitude());
+                                longitude = String.valueOf(mLastLocation.getLongitude());
+                                sendMessage();
+                            } else {
+                                //In case Last Location is not available with the Google Play Services.
+                            }
                         }
-                        else{
-                            //In case Last Location is not available with the Google Play Services.
-                        }
-                    }
-                });
+                    });
+        } else {
+            Log.i(TAG, "Permission no longer available");
+        }
     }
 
-    public void bezirkListener(EventSet eventSet){
+    public void bezirkListener(){
 
-        eventSet = new EventSet(CommandEvent.class);
         eventSet.setEventReceiver(new EventSet.EventReceiver() {
 
             @Override
@@ -364,5 +368,32 @@ public class LocationDataService extends Service implements ZirkEndPoint {
             }
         });
         bezirk.subscribe(eventSet);
+    }
+
+    //TESTING
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public class LocationServiceBinder extends Binder {
+        public LocationDataService getService() {
+            return LocationDataService.this;
+        }
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public void setBezirkInstance(Bezirk tBezirk){ this.bezirk = tBezirk;
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public void setEventSetSubscriptionHandler(EventSet.EventReceiver receiver){
+        eventSet.setEventReceiver(receiver);
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public EventSet.EventReceiver getEventSetSubscriptionHandler(){
+        return eventSet.getEventReceiver();
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public String getCurrentMode(){
+        return mode;
     }
 }
