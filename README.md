@@ -106,10 +106,6 @@ specify how to configure a gathering zirk into a particular mode
 
 specify the rules a data gathering zirk should follow to get normalization zirk work for you
 
-### Data model for communication between data normalization and data inference
-
-specify the rules a data normalization zirk should follow to get inferecne zirk work for you
-
 ### Implement application callbacks when there is a notification
 
 specify how to implement one's own business logic when there is a keyword match event 
