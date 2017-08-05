@@ -51,9 +51,29 @@ This can be done by creating a field in the class.
 ```private static final String TAG = "LocationDataGathrngZirk";```
 - Override the ```onCreate()``` method of the service and register the Zirk to the Bezirk Middleware.
 Also call the method for listening to events from the ```ZirkManagerService class```, which sends the mode of operation to the respective Zirks.
-![onCreate()](https://github.com/stormysun513/dndi-android/blob/rajatdem/documents/images/onCreate%20in%20Zirk.png)
+```JAVA
+@Override
+public void onCreate() {
+    super.onCreate();
+    bezirk = BezirkMiddleware.registerZirk("ZIRK_NAME");
+    bezirkListener();
+}
+```
 - Implement the ```bezirkListener() method```
-![bezirkListener](https://github.com/stormysun513/dndi-android/blob/rajatdem/documents/images/bezirkListener.png)
+```JAVA
+public void bezirkListener() {
+    eventSet.setEventReceiver(new EventSet.EventReceiver() {
+        @Override
+        public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
+            final CommandEvent commandEvent = (CommandEvent) event;
+            CommandEvent.CmdType cmdType = commandEvent.type;
+            Log.i(TAG, this.getClass().getName() + "::received" + cmdType);
+            //TODO: Implement your code to handle different modes of operation
+            
+        }
+    }
+}
+```
 This method implements handling of the ```CommandEvent``` received by the sensor Zirk from ```ZirkManagerService```
 Different flow of execution can be accomodated depending on the type of Mode received by the Zirk. 
 - Implement a ```sendMessage() method``` to send Bezirk Events to Normalization Zirks from the Data Gathering Zirk
