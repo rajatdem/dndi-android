@@ -93,6 +93,7 @@ public void sendMessage () {
         bezirk.sendEvent(rawDataEvent);
     }
 ```
+- Open ```ZirkManagerService.java``` in ```../frameworkinterface package```. Add the your Zirk Service class name in the ```private final Class<?>[] services``` field'd declarartion. This field stores the name of the Service classes that need to be started when the framework is started.
 
 ### Configure access token for data gathering zirk (if required)
 
