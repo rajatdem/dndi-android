@@ -13,12 +13,31 @@ include all third-party libraries required to build the project
 ## Installation
 
 specify how to include the framework and run along with the android project
+- Download or clone the repository [Github Repository](https://github.com/stormysun513/dndi-android)
+- Download and Install Android Studio [Android Studio](https://developer.android.com/studio/index.html)
+- Import the project into Android Studio from the folder where the repository was cloned on the local device.
+- Create and place the ```gradle.properties``` under the root project folder. Include the API keys for the different services here.
+Sample properties file:
+```PROPERTIES
+org.gradle.jvmargs=-Xmx1536m
+
+
+TWITTER_API_KEY = "FILL_YOUR_OWN"
+TWITTER_API_SECRET = "FILL_YOUR_OWN"
+TWITTER_ACCESS_TOKEN = "FILL_YOUR_OWN"
+TWITTER_ACCESS_SECRET = "FILL_YOUR_OWN"
+TWITTER_USER_ID = "FILL_YOUR_OWN"
+FACEBOOK_API_KEY = "FILL_YOUR_OWN"
+GOOGLE_PLACE_API_KEY = "FILL_YOUR_OWN"
+```
+- This project uses SDK Version of 25 for Android. Build tools version: 25.0.2 
+This can be updated from
+
+**Tools --> Android --> SDK Manager --> SDK Tools (from the tabs in the Window) --> _Select_ Android SDK Built-Tools and _check the_ Show Package Details _box on the right bottom_ --> _Select_ 25.0.2 --> Apply --> OK**
 
 ## Example
 
 ### Build a new data preparation Zirk
-
-specify how to plug in a new data preparation unit made by developer into the framework
 
 - Install Android Studio [Android Studio Setup](https://developer.android.com/studio/intro/migrate.html)
 - Import the project in Android Studio. 
@@ -96,20 +115,22 @@ Format of the JSON file
 ```
 [
   {
-    "category": "@CATEGORY_NAME_1" ,
+    "category": "@CATEGORY_NAME_1",
     "keywords": [
       "ENTITY_1",
       "ENTITY_2",
       . . . .
+      "ENTITY_N"
     ]
   },
   . . . .
   {
-    "category": "@CATEGORY_NAME_2" ,
+    "category": "@CATEGORY_NAME_2",
     "keywords": [
       "ENTITY_1",
       "ENTITY_2",
       . . . .
+      "ENTITY_N"
     ]
   }
 ]
