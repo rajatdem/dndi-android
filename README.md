@@ -18,7 +18,7 @@ DNDI is an Android framework that makes managing Zirks (an Android service using
 ### Context Diagram
 The Data preparation infrastructure has the following context diagram.
 
-![Context Diagram](https://github.com/stormysun513/dndi-android/blob/SaiHariChandana-patch-1/documents/images/contextDiagram%20-%20Page%201.png)
+![Context Diagram](https://github.com/stormysun513/dndi-android/blob/develop/documents/images/contextDiagram%20-%20Page%201.png)
 
 In this diagram we indentify the following:
 
@@ -49,7 +49,7 @@ The Bezirk platform is a publish-subscribe based middlware used for secure flow 
 ### Proposed Solution
 The diagram below represents a run time view of the proposed architecture. 
 
-![Run time view of the system](https://github.com/stormysun513/dndi-android/blob/SaiHariChandana-patch-1/documents/images/Runtime%20View_v1.3.png)
+![Run time view of the system](https://github.com/stormysun513/dndi-android/blob/develop/documents/images/Runtime%20View_v1.3.png)
 
 The Framework is a library that is used by third party applications. It uses the Bezirk middleware and follows publish-subscribe model to interact between different Zirks. 
  
