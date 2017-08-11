@@ -13,12 +13,19 @@ The team consists of 3 members
 
 DNDI is an Android framework that makes managing Zirks (an Android service using the Bezirk middleware for communication among other services) easier. One can create their own Zirk and plug into the framework easily. As for the developer, it provides a simple interface to collect multiple data sources with a single interface.
 
+## Example Use Cases
+
+- Learn the user interest from historical tweets and fuse with location data
+- Update of fused results when there is a location change
+- Real-time update of interest categories with new tweets from the user
+
+
 ## Architecture
 
 ### Context Diagram
 The Data preparation infrastructure has the following context diagram.
 
-![Context Diagram](https://github.com/stormysun513/dndi-android/blob/SaiHariChandana-patch-1/documents/images/contextDiagram%20-%20Page%201.png)
+![Context Diagram](https://github.com/stormysun513/dndi-android/blob/develop/documents/images/contextDiagram%20-%20Page%201.png)
 
 In this diagram we indentify the following:
 
@@ -49,7 +56,7 @@ The Bezirk platform is a publish-subscribe based middlware used for secure flow 
 ### Proposed Solution
 The diagram below represents a run time view of the proposed architecture. 
 
-![Run time view of the system](https://github.com/stormysun513/dndi-android/blob/SaiHariChandana-patch-1/documents/images/Runtime%20View_v1.3.png)
+![Run time view of the system](https://github.com/stormysun513/dndi-android/blob/develop/documents/images/Runtime%20View_v1.3.png)
 
 The Framework is a library that is used by third party applications. It uses the Bezirk middleware and follows publish-subscribe model to interact between different Zirks. 
  
@@ -256,6 +263,37 @@ eventSet.setEventReciever((event, zirkEndpoint)->{
 [Sai Chandana](https://github.com/SaiHariChandana)
 
 specify the rules a data gathering zirk should follow to get normalization zirk work for you
+The raw data gathered from different data gathering zirk will have to be converted into message format specified below.
+
+Message format:
+{
+	“date”:
+	“location” :
+	“text” :
+}
+To convert to this format, the user can create a function of type RawData that creates a rawData object that will set the required text, location or date information. The rawdata can then be appended to the RawDataEvent event type using the helper function appendRawData().
+
+The code snippet below gives an example of how to send raw data event for gathered facebook page categories using the required message format. 
+
+```java
+
+public static RawData packFbPageCategoriesToRawDataFormat(String page_category)
+    {
+
+        RawData rawData = new RawData();
+        rawData.setText(page_category);
+        return rawData;
+    }
+
+private void sendPageLikes(String page_category){
+    final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
+
+    event.appendRawData(packFbPageCategoriesToRawDataFormat(page_category));
+    event.hasText = true;
+    bezirk.sendEvent(event);     
+    }
+```
+There are two functions, one that converts the data gathered into rawData type and the second one that appends the rawdata to event that will be sent over the middleware.
 
 ### Implement application callbacks when there is a notification
 
@@ -437,4 +475,6 @@ Sometimes, one may have multiple activities in an single application. Each activ
 
 ## For more information
 
-put any reference here
+- [Architecture Design Specification](documents/Bosch%20Bezirk%20Architecture%20Design%20Specification.pdf)
+- [Notional Architecture](documents/Bosch%20Bezirk%20Architecture%20Design%20Specification.pdf)
+
