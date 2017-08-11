@@ -96,9 +96,7 @@ public class GeocodingService extends Service {
             } catch (IllegalArgumentException illegalArgumentException) {
                 // Catch invalid latitude or longitude values.
                 errorMessage = getString(R.string.invalid_lat_long_used);
-                Log.e(TAG, errorMessage + ". " +
-                        "Latitude = " + mLocation.getLatitude() +
-                        ", Longitude = " + mLocation.getLongitude(), illegalArgumentException);
+                Log.e(TAG, errorMessage + ". " + "Latitude = " + mLocation.getLatitude() + ", Longitude = " + mLocation.getLongitude(), illegalArgumentException);
             }
         }
 
@@ -111,13 +109,14 @@ public class GeocodingService extends Service {
             }
         } else {
             Address address = addresses.get(0);
-            Log.i(TAG, address.toString());
+            Log.i(TAG, "(THEZIRKS) Address: " + address.getAddressLine(0) + ", " + address.getAddressLine(1) + ", " +
+                    address.getAdminArea());
             ArrayList<String> addressFragments = new ArrayList<>();
 
             for(int i = 0; i < address.getMaxAddressLineIndex(); i++) {
                 addressFragments.add(address.getAddressLine(i));
             }
-            Log.i(TAG, getString(R.string.address_found));
+//            Log.i(TAG, getString(R.string.address_found));
         }
     }
 
@@ -127,14 +126,14 @@ public class GeocodingService extends Service {
 
             @Override
             public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
-                Log.i(TAG, this.getClass().getName() + ":: received " );
+//                Log.i(TAG, this.getClass().getName() + ":: received " );
                 final RawDataEvent rawDataEvent = (RawDataEvent) event;
 
                 RawData data = rawDataEvent.getRawDataArray().get(0);
                 if(data.getLocation() != null){
                     mLocation = getLocationStringFromJSONRaw(data.getLocation());
                     if(mLocation != null){
-                        Log.i(TAG, "Received Location:"+mLocation.getLatitude()+ "," + mLocation.getLongitude());
+//                        Log.i(TAG, "Received Location:"+mLocation.getLatitude()+ "," + mLocation.getLongitude());
                         getGeoCodeAddress();
                     }
                 }

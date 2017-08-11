@@ -7,7 +7,7 @@
       "watermelon",
       "peach",
       "cherry",
-      "blue berry",
+      "blueberry",
       "pineapple"
     ]
   },
@@ -26,9 +26,9 @@
     "keywords":[
       "fries",
       "burger",
-      "pizza",
+      "wraps",
       "coke",
-      "ice cream"
+      "hotdog"
     ]
   },
   {
@@ -50,11 +50,11 @@
   {
     "category":"indian food",
     "keywords":[
-      "chicken 65",
-      "paneer 65",
-      "chopsney",
-      "manchurian",
-      "shezwan"
+      "biryani",
+      "samosa",
+      "dosa",
+      "rosgulla",
+      "paneer"
     ]
   }
 ]

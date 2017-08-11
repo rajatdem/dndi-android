@@ -63,7 +63,7 @@ public class KeywordMatchService extends Service {
                 if(event instanceof RawDataEvent){
                     final RawDataEvent rawDataEvent = (RawDataEvent) event;
                     if(rawDataEvent.hasText){
-                        Log.i(TAG, this.getClass().getName() + ":: received raw text..." + rawDataEvent.toString());
+//                        Log.i(TAG, this.getClass().getName() + ":: received raw text..." + rawDataEvent.toString());
                         checkKeywordMatch(rawDataEvent.getRawDataArray());
                     }
                 }
@@ -101,7 +101,7 @@ public class KeywordMatchService extends Service {
                     String category = mKeywordMap.get(token);
                     keywordMatchEvent.increaseMatchOccurrence(category);
                     keywordList.add(new Keyword(token, category));
-                    Log.i(TAG, this.getClass().getName() + ":: match " + token + " (" + category + ")");
+                    Log.i(TAG, "(THEZIRKS) Match: " + token + " (" + category + ")");
                 }
             }
         }
