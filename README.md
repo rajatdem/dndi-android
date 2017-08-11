@@ -263,6 +263,37 @@ eventSet.setEventReciever((event, zirkEndpoint)->{
 [Sai Chandana](https://github.com/SaiHariChandana)
 
 specify the rules a data gathering zirk should follow to get normalization zirk work for you
+The raw data gathered from different data gathering zirk will have to be converted into message format specified below.
+
+Message format:
+{
+	“date”:
+	“location” :
+	“text” :
+}
+To convert to this format, the user can create a function of type RawData that creates a rawData object that will set the required text, location or date information. The rawdata can then be appended to the RawDataEvent event type using the helper function appendRawData().
+
+The code snippet below gives an example of how to send raw data event for gathered facebook page categories using the required message format. 
+
+```java
+
+public static RawData packFbPageCategoriesToRawDataFormat(String page_category)
+    {
+
+        RawData rawData = new RawData();
+        rawData.setText(page_category);
+        return rawData;
+    }
+
+private void sendPageLikes(String page_category){
+    final RawDataEvent event = new RawDataEvent(RawDataEvent.GatherMode.BATCH);
+
+    event.appendRawData(packFbPageCategoriesToRawDataFormat(page_category));
+    event.hasText = true;
+    bezirk.sendEvent(event);     
+    }
+```
+There are two functions, one that converts the data gathered into rawData type and the second one that appends the rawdata to event that will be sent over the middleware.
 
 ### Implement application callbacks when there is a notification
 
