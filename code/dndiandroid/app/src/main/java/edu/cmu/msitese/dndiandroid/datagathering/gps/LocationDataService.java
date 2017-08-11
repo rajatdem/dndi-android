@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 
+import edu.cmu.msitese.dndiandroid.R;
 import edu.cmu.msitese.dndiandroid.Utils;
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterService;
 import edu.cmu.msitese.dndiandroid.event.CommandEvent;
@@ -63,7 +64,7 @@ public class LocationDataService extends Service implements ZirkEndPoint {
     private static long INTERVAL = 30000; //30secs default
     private static long FAST_INTERVAL = 30000; //30secs default
     private static long DISPLACEMENT = 1000; //1000metres default
-    private static String mode = "BATCH";
+    private static String mode = "NONE";
 
     //Service binding related fields
     private final IBinder mBinder = new LocationDataServiceBinder();
@@ -261,7 +262,7 @@ public class LocationDataService extends Service implements ZirkEndPoint {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
         stopSelf();
         Log.i(TAG, "Stopping GPS service!");
-        Toast.makeText(this, "GPS Service Destroyed", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "GPS Service Destroyed", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -289,7 +290,7 @@ public class LocationDataService extends Service implements ZirkEndPoint {
     }
 
     public class LocationDataServiceBinder extends Binder {
-        LocationDataService getService() {
+        public LocationDataService getService() {
             return LocationDataService.this;
         }
     }
@@ -330,7 +331,7 @@ public class LocationDataService extends Service implements ZirkEndPoint {
                     final CommandEvent commandEvent = (CommandEvent) event;
                     CommandEvent.CmdType cmdType = commandEvent.type;
 
-                    if (!commandEvent.target.equals("GPS")) {
+                    if (!commandEvent.target.equals(getString(R.string.target_gps))) {
                         return;
                     }
 
@@ -402,7 +403,12 @@ public class LocationDataService extends Service implements ZirkEndPoint {
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-    public String getCurrentMode(){
+    public static String getCurrentMode(){
         return mode;
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public static void setMode(String mMode){
+        mode = mMode;
     }
 }

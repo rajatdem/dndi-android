@@ -1,10 +1,13 @@
 package edu.cmu.msitese.dndiandroid.datanormalization.location;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.IntDef;
@@ -134,11 +137,26 @@ public class GeocodingService extends Service {
                     mLocation = getLocationStringFromJSONRaw(data.getLocation());
                     if(mLocation != null){
                         Log.i(TAG, "Received Location:"+mLocation.getLatitude()+ "," + mLocation.getLongitude());
-                        getGeoCodeAddress();
+                        checkNetworkCallGeoCoder();
                     }
                 }
             }
         });
         bezirk.subscribe(eventSet);
+    }
+
+    private void checkNetworkCallGeoCoder() {
+        ConnectivityManager connManager = (ConnectivityManager)
+                getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo nwInfo = connManager.getActiveNetworkInfo();
+        if (nwInfo != null) {
+            if (nwInfo.getType() == (ConnectivityManager.TYPE_WIFI ) ||
+                    nwInfo.getType() == ( ConnectivityManager.TYPE_MOBILE)) {
+                getGeoCodeAddress();
+            }
+        }
+        else {
+            Log.i(TAG, "No Network Available");
+        }
     }
 }

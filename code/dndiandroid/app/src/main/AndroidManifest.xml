@@ -14,7 +14,7 @@
         android:name="android.support.multidex.MultiDexApplication"
         android:theme="@style/AppTheme" >
 
-        <!-- activities for demo app 1 -->
+         <!--activities for demo app 1-->
         <!--<activity-->
             <!--android:name=".demoapp1.MainActivity"-->
             <!--android:screenOrientation="portrait">-->
@@ -25,7 +25,7 @@
         <!--</activity>-->
         <!--<activity android:name="edu.cmu.msitese.dndiandroid.demoapp1.NotificationActivity" android:screenOrientation="portrait"/>-->
 
-        <!-- activities for demo app 2 -->
+         activities for demo app 2
         <activity android:name=".demoapp2.LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>

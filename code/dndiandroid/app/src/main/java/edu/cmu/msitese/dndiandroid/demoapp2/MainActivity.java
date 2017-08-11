@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int UPDATE_DELAY = 5000;
 
     private DNDIFramework dndi;
-    private String mLastCategory = null;
+    private String mLastCategory = "";
     private Location mLastLocation = null;
     private ListView mListView;
     private ProgressBar mProgressBar;
@@ -64,13 +64,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_tweet:
-                // generate a dialogue for twitter post input
-                fetchInputFromEditText();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        int i = item.getItemId();
+        if (i == R.id.action_tweet) {// generate a dialogue for twitter post input
+            fetchInputFromEditText();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 

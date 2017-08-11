@@ -95,5 +95,4 @@ public class DNDIFrameworkTest  {
         // close the bezirk interface
         bezirk.unregisterZirk();
     }
->>>>>>> b212ed90b54b16d106cfb349f949c34ff3d02b86
 }

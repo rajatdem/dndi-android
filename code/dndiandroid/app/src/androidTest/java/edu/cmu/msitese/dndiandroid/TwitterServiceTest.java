@@ -158,7 +158,6 @@ public class TwitterServiceTest extends ServiceTestCase<TwitterService> {
                 }
             }
         }, 1000);
-
         // wait for timertask to complete
         synchronized (syncObject){
             syncObject.wait();
