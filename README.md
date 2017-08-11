@@ -1,6 +1,7 @@
 # Data Preparation framework
 
-A data preparation framework built on top of Bezirk middleware 
+A data preparation framework built on top of Bezirk Middleware by the MSIT-ESE team at Carnegie Mellon University's Software Engineering Department.
+The team consists of 3 members
 
 [Yu-Lun](https://github.com/stormysun513/)
 
@@ -10,13 +11,65 @@ A data preparation framework built on top of Bezirk middleware
 
 ## Overview
 
-DNDI is an Android framework that makes manage zirks (an Android service using the Bezirk middleware for communication among other services). One can create their own zirk and plug into the framework easily. As for the developer, it provides a simple interface to collect multiple data sources with a single interface.
+DNDI is an Android framework that makes managing Zirks (an Android service using the Bezirk middleware for communication among other services) easier. One can create their own Zirk and plug into the framework easily. As for the developer, it provides a simple interface to collect multiple data sources with a single interface.
 
 ## Architecture
 
-[Sai Chandana](https://github.com/SaiHariChandana)
+### Context Diagram
+The Data preparation infrastructure has the following context diagram.
 
-view diagrams
+![Context Diagram](https://github.com/stormysun513/dndi-android/blob/SaiHariChandana-patch-1/documents/images/contextDiagram%20-%20Page%201.png)
+
+In this diagram we indentify the following:
+
+**Users**
+1. Mobile user: End user of the device 
+2. Application developers: Developers of Android application
+
+**Android Device**
+This is the system on which the framework is developed
+
+**Third party applications**
+These are applications that use the data preparation infrastructure results to make user recommendations. Ex Yelp 
+
+**Sensor sources**
+These can be both hardware or software sensors. 
+1. *Hardware sensors*: Sensors available on the smartphone such as GPS, accelerometer etc...
+2. *Software sensors*: Sensors such as web services, social media platforms like Facebook, Twitter, LinkedIn etc...
+
+**Data Preparation infrastrucutre**
+The framework that 
+1. Gathers users data from different sensor sources
+2. Provides some meaning to the data by normalizing it 
+3. Infers users interests and preferences
+
+**Bezirk Middleware**
+The Bezirk platform is a publish-subscribe based middlware used for secure flow of data and keep users information in control of user. (https://business.bezirk.com/platform.html) 
+
+### Proposed Solution
+The diagram below represents a run time view of the proposed architecture. 
+
+![Run time view of the system](https://github.com/stormysun513/dndi-android/blob/SaiHariChandana-patch-1/documents/images/Runtime%20View_v1.3.png)
+
+The Framework is a library that is used by third party applications. It uses the Bezirk middleware and follows publish-subscribe model to interact between different Zirks. 
+ 
+A Zirk is a process that wraps around functional units and provides abstraction for the technologies used by the Zirks. A Zirk also helps restrict the input and output formats for communication. 
+
+In the above view, there are following Zirks:
+1. *Data Gathering*: Facebook Zirk, Twitter Zirk, GPS Zirk.
+2. *Data Normalization*:Normalization Zirk that can do text and location based normalization.
+3. *Data Inference*: Inference Zirk provides inferences based on the data provided by normalization.
+
+The information gathered by each of these data gathering Zirks are sent to the normalization Zirks in a unified format elaborated below. The information is gathered in three ways: 
+1. *Batch Mode*: Gather historical data of the user. Example: Last 6 months of tweets.
+2. *Event Mode*: Gather data whenever there is an event. Example: Every time user tweets something.
+3. *Periodic Mode* Gather data after elapsed period of time. Example: Gather all users new tweets at the end of the day.
+
+The information in the normalization Zirks are then normalized based on: 
+1. *Text*: Parse the textual information to indentify key words. The pre-defined set of keywords are stored on the phone.
+2. *Location*: Parse the location coordinates and provide place name, area name for those coordinates.
+
+The inference Zirk will look at the normalized results, checks for the categories of the keywords idnetified and infers the users interests. 
 
 ## Dependencies
 
@@ -26,10 +79,6 @@ view diagrams
 - ranga543/yelp-fusion-client (0.1.2)
 
 ## Installation
-
-[Rajat Mathur](https://github.com/rajatdem)
-
-specify how to include the framework and run along with the android project
 
 - Download or clone the repository [Github Repository](https://github.com/stormysun513/dndi-android)
 - Download and Install Android Studio [Android Studio](https://developer.android.com/studio/index.html)
@@ -53,15 +102,42 @@ This can be updated from
 
 **Tools --> Android --> SDK Manager --> SDK Tools (from the tabs in the Window) --> _Select_ Android SDK Built-Tools and _check the_ Show Package Details _box on the right bottom_ --> _Select_ 25.0.2 --> Apply --> OK**
 
+## Packaging
+
+The Android library is packaged as a **.aar** file, which is an acronym for Android Archive. This AAR can be used by other Android projects by simply importing aspart of the build.
+
+### Packaging the Framework into a Library: Process used to package the framework developed
+
+- Open the build.gradle file for the Module:app under the gradle folder Android Studio's app view.
+- Change the ```apply:plugin: 'com.android.application'``` to ```apply plugin: 'com.android.library'``` to compile the framework as a library.
+- Sync the project by clicking on the ```Sync Now``` button appearing on the top of the gradle file. currently.
+- To build and generate the AAR: Click on **Project --> Build --> Build APK** and select the location to store the AAR file.
+
+### Using the Library in your own Android project.
+
+- Click File > New > New Module.
+- Click Import .JAR/.AAR Package then click Next.
+- Enter the location of the compiled AAR or JAR file then click Finish.
+- In the settings.gradle, include : ```include ':app', ':my-library-module'``` at the top of the file.
+- In the build.gradle file, add 
+```
+dependencies {
+    compile project(":my-library-module")
+}
+```
+- Sync the Project
+
+_Reference_: [Packaging Android Framework](https://developer.android.com/studio/projects/android-library.html)
+
 ## Example
 
-### Build a new data preparation Zirk
+### Build a new data preparation zirk
 
 - Install Android Studio [Android Studio Setup](https://developer.android.com/studio/intro/migrate.html)
 - Import the project in Android Studio. 
 - Create a new package under ```edu.cmu.msitese.dndiandroid.datagathering``` with the name of the sensor source.
 - Create a new Android Service by
-   **Right click on the new package created --> New --> Service --> Service**
+   **Right click on the new package created --> New --> Service --> Service**
 - This creates a new Java class in the package. Name it as ```[SensorName]Service.java```.
 - Implement ```ZirkEndPoint interface``` and ensure the class extends the ```Service class```
 - Create a TAG for the class. This helps in logging and debugging later
@@ -115,15 +191,65 @@ public void sendMessage () {
 
 ### Configure access token for data gathering zirk (if required)
 
-[Sai Chandana](https://github.com/SaiHariChandana)
-
 specify how to add an interface to pass access token from application to the target gathering zirk
+
+1. Use gradle.properties to store the needed API_KEY and API_SECRET values
+2. Within the build.gradle file use BuildConfig class to create the corresponding fields.
+```Java
+buildConfigField(“String”,”EXAMPLE_API_KEY”,EXAMPLE_API_KEY)
+```
+3. Use the BuildConfig fields to load the key values 
+```Java
+Private static final String EXAMPLE_API_KEY = BuildConfig.EXAMPLE_API_KEY;
+```
+4. Use Android shared preferences to store and retrieve keys as needed.
 
 ### Configure different modes on data gathering zirk
 
-[Sai Chandana](https://github.com/SaiHariChandana)
-
 specify how to configure a gathering zirk into a particular mode
+
+1. Use the mode to send corresponding event.
+2. Create an function to prepare the required event on recieving the mode for the zirk. Add the function inside the DNDIFramework class.
+
+Here is an example to send the pull event to confiugre pull mode 
+
+```Java
+public void configRequiredMode(){
+	if(isBound){	
+		//Prepare the pull event to send over middleware
+		final CommandEventevt = new CommandEvent(CommandEvent.CmdType.CMD_PULL);
+		
+		//Use the ZirkManagerService to send Bezirk event 
+		mZirkManagerService.sendBezirkEvent(evt);	
+}
+```
+2. The interface from which the mode is being configured will call an instance of dndi to access the above created function. 
+
+```Java
+someFunctionToSelectPullMode { dndi.pullDataInBatchAll(); }  
+```
+
+3. The Bezirk middleware will publish the event 
+
+4. To receive the event and check the mode configured
+```Java
+eventSet.setEventReciever((event, zirkEndpoint)->{
+ final CommandEvent commandEvent = (CommandEvent) event;
+ CommandEvent.CmdType cmdType = commandEvent.type;		
+  
+  switch (cmdType)
+  {
+    case CMD_PULL:
+       break;
+    case CMD_PERIODIC:
+       break;
+    case CMD_EVENT:
+	     break;
+  }
+  mBezirk.subscribe(eventSet);
+}
+	
+ ```
 
 ### Data model for communication between data gathering and data normalization
 
@@ -174,11 +300,28 @@ LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
 
 ### Define your own event
 
-[Sai Chandana](https://github.com/SaiHariChandana)
+To create your own event
+1. Go to event folder in main/java/edu/cmu/msitese/dndiandroid/event/
+2. Create a java file for your event using the format  event_name.java
+   Sample code for event_name.java 
+   
+```Java
+Public class event_name extends Event {
+       // your code
+       ......
+}
 
-specify the rules one has to abide by if one would like to create one's own zirk
+```
+3. Add the event of interest within an eventset of type eventSet
 
-### Update the keyword-category map
+```Java
+Private final EventSet eventset = new EventSet {
+	event_name.class
+}
+
+```
+
+### Update the keyword-category map 
 
 Keywords are stored in a JSON file as part of the Android application. These are used by the textual normalization
 Zirk to compare them with the sensor data feed of the user. The keywords are categorized under a category.
@@ -218,9 +361,9 @@ Format of the JSON file
 
 ### Test the new components
 
-One may consider testing the new zirk to the framework. One can refer to some androidtest files in the test directory. We illustrate the way how a zirk is tested. 
+One may consider testing the new Zirk to the framework. One can refer to some androidtest files in the test directory. We illustrate the way how a Zirk is tested. 
 
-Each testcase has its own context, so one has to initialize the bezirk middleware everytime. Later, create an object used to notify the waiting main thread. The reason why we implement th testcase in this way is that bezirk requires time for initialization. A TimerTask is required to have a slight delay before starting testing. After having this code structure, one can put the testing logics in the `run()` function overrided by the TimerTask.
+Each testcase has its own context, so one has to initialize the Bezirk Middleware everytime. Later, create an object used to notify the waiting main thread. The reason why we implement th testcase in this way is that Bezirk requires time for initialization. A TimerTask is required to have a slight delay before starting testing. After having this code structure, one can put the testing logics in the `run()` function overrided by the TimerTask.
 
 ```java
 @Test(timeout = 30000)
@@ -260,7 +403,7 @@ public void testKeywordMatchEvent() throws InterruptedException {
 }
 ```
 
-Although most zirks are running independently and no other activities or services will bind to them, one may still implement the `onBind` method and return a IBinder for testing purpose. The latest Android SDK has provided an anotation for methods that is defined for testing only. One can check the usage of anotation `@VisibleForTesting(otherwise = VisibleForTesting.NONE)`.
+Although most Zirks are running independently and no other activities or services will bind to them, one may still implement the `onBind` method and return a IBinder for testing purpose. The latest Android SDK has provided an anotation for methods that is defined for testing only. One can check the usage of anotation `@VisibleForTesting(otherwise = VisibleForTesting.NONE)`.
 
 ### Maintain the lifecycle for resource cleanup and power saving
 
