@@ -475,4 +475,6 @@ Sometimes, one may have multiple activities in an single application. Each activ
 
 ## For more information
 
-put any reference here
+- [Architecture Design Specification](documents/Bosch%20Bezirk%20Architecture%20Design%20Specification.pdf)
+- [Notional Architecture](documents/Bosch%20Bezirk%20Architecture%20Design%20Specification.pdf)
+
