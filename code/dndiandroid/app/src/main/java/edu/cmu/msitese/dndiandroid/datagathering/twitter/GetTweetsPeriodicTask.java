@@ -61,7 +61,7 @@ class GetTweetsPeriodicTask extends AsyncTask <Void, Void, Void> {
      */
     private void pullTweetsSinceLastId() throws TwitterException {
 
-        TwitterDao dao = new TwitterDao(mContext);
+        TwitterInfoDao dao = new TwitterInfoDao(mContext);
         long lastId = dao.loadLastTweetId();
 
         List<twitter4j.Status>  statuses;

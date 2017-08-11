@@ -60,7 +60,7 @@ class KeywordFileLoader {
                 String category = object.getString("category");
                 JSONArray keywords = object.getJSONArray("keywords");
                 for(int j = 0; j < keywords.length(); j++){
-                    String keyword = keywords.getString(j);
+                    String keyword = keywords.getString(j).toLowerCase();
                     map.put(keyword, category);
                 }
             }

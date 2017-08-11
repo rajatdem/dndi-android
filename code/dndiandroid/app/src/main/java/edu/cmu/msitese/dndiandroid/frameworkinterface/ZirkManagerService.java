@@ -92,6 +92,7 @@ public class ZirkManagerService extends Service {
                         LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
                     }
                     else if(event instanceof RawDataEvent) {
+
                         final RawDataEvent rawDataEvent = (RawDataEvent) event;
                         if(rawDataEvent.hasLocation){
                             RawData data = rawDataEvent.getRawDataArray().get(0);
@@ -144,7 +145,6 @@ public class ZirkManagerService extends Service {
     }
 
     public void stopGPSService() {
-        Log.i(TAG, "Stopping GPS services!!!");
         stopService(new Intent(getBaseContext(), LocationDataService.class));
     }
 

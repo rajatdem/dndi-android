@@ -33,16 +33,17 @@ public class TwitterCredentialDao {
                 Context.MODE_PRIVATE);
         String token = sharedPref.getString(mContext.getString(R.string.app_twitter_token), "");
         String secret = sharedPref.getString(mContext.getString(R.string.app_twitter_secret), "");
+        String name = sharedPref.getString(mContext.getString(R.string.app_twitter_name), "");
 
         if(token.isEmpty()){
             return null;
         }
         else{
-            return new TwitterCredential(token, secret);
+            return new TwitterCredential(token, secret, name);
         }
     }
 
-    public void saveTwitterCredential(String token, String secret){
+    public void saveTwitterCredential(String token, String secret, String name){
 
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.app_sp),
@@ -50,6 +51,7 @@ public class TwitterCredentialDao {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(mContext.getString(R.string.app_twitter_token), token);
         editor.putString(mContext.getString(R.string.app_twitter_secret), secret);
+        editor.putString(mContext.getString(R.string.app_twitter_name), name);
         editor.commit();
     }
 }

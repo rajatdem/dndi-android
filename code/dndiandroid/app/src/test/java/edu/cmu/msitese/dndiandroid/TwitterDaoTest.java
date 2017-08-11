@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterCredential;
-import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterInfoDao;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,12 +50,12 @@ public class TwitterDaoTest {
         when(mContext.getString(R.string.twitter_access_secret)).thenReturn("werewr");
         when(mContext.getString(R.string.twitter_screen_name)).thenReturn("werwrwr");
 
-        TwitterDao twitterDao = new TwitterDao(mContext);
-        twitterDao.saveTwitterCredential("sdfsdfsdf", "sfsdfsdf", "sfdffd");
+        TwitterInfoDao twitterInfoDao = new TwitterInfoDao(mContext);
+        twitterInfoDao.saveTwitterCredential("sdfsdfsdf", "sfsdfsdf", "sfdffd");
 
         verify(spyEditor, times(1)).commit();
 
-        twitterDao.clearTwitterCredential();
+        twitterInfoDao.clearTwitterCredential();
         verify(spyEditor, times(1)).apply();
     }
 
@@ -78,8 +78,8 @@ public class TwitterDaoTest {
         when(mSharedPrefs.getString(secret, "")).thenReturn(twitterSecret);
         when(mSharedPrefs.getString(name, "")).thenReturn(twitterScreenName);
 
-        TwitterDao twitterDao = new TwitterDao(mContext);
-        TwitterCredential credential = twitterDao.getTwitterCredential();
+        TwitterInfoDao twitterInfoDao = new TwitterInfoDao(mContext);
+        TwitterCredential credential = twitterInfoDao.getTwitterCredential();
 
         assertEquals(twitterToken, credential.token);
         assertEquals(twitterSecret, credential.secret);
@@ -93,11 +93,11 @@ public class TwitterDaoTest {
         SharedPreferences.Editor spyEditor = spy(mEditor);
         when(mSharedPrefs.edit()).thenReturn(spyEditor);
 
-        TwitterDao twitterDao = new TwitterDao(mContext);
-        twitterDao.saveLastTweetId(100);
+        TwitterInfoDao twitterInfoDao = new TwitterInfoDao(mContext);
+        twitterInfoDao.saveLastTweetId(100);
         verify(spyEditor, times(1)).apply();
 
-        twitterDao.clearTwitterCredential();
+        twitterInfoDao.clearTwitterCredential();
         verify(spyEditor, times(2)).apply();
     }
 
@@ -110,8 +110,8 @@ public class TwitterDaoTest {
         when(mContext.getString(R.string.twitter_last_tweet_id)).thenReturn(key);
         when(mSharedPrefs.getString(key, "")).thenReturn(twitterIdStr);
 
-        TwitterDao twitterDao = new TwitterDao(mContext);
-        long id = twitterDao.loadLastTweetId();
+        TwitterInfoDao twitterInfoDao = new TwitterInfoDao(mContext);
+        long id = twitterInfoDao.loadLastTweetId();
 
         assertEquals(id, Long.parseLong(twitterIdStr));
     }

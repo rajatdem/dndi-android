@@ -10,9 +10,11 @@ public class TwitterCredential implements Serializable {
 
     String accessToken;
     String accessSecret;
+    String screenName;
 
-    public TwitterCredential(String token, String secret){
+    public TwitterCredential(String token, String secret, String name){
         accessToken = token;
         accessSecret = secret;
+        screenName = name;
     }
 }

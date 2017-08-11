@@ -1,6 +1,9 @@
 package edu.cmu.msitese.dndiandroid.demoapp2;
 
+import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -15,6 +18,12 @@ import java.net.URL;
 public class GetImageInViewHolderTask extends AsyncTask<ImageViewHolder, Void, ImageViewHolder> {
 
     private static final String TAG = "YELP_DEMO";
+
+    private Context mContext;
+
+    public GetImageInViewHolderTask(Context context){
+        mContext = context;
+    }
 
     @Override
     protected ImageViewHolder doInBackground(ImageViewHolder... params) {
@@ -36,6 +45,15 @@ public class GetImageInViewHolderTask extends AsyncTask<ImageViewHolder, Void, I
     @Override
     protected void onPostExecute(ImageViewHolder result) {
         super.onPostExecute(result);
-        result.imageView.setImageBitmap(result.bitmap);
+
+        Drawable imageDrawable = result.imageView.getDrawable();
+        result.imageView.setImageDrawable(new BitmapDrawable(mContext.getResources(), result.bitmap));
+
+        if (imageDrawable != null){
+            BitmapDrawable bitmapDrawable = ((BitmapDrawable) imageDrawable);
+            if (!bitmapDrawable.getBitmap().isRecycled()) {
+                bitmapDrawable.getBitmap().recycle();
+            }
+        }
     }
 }

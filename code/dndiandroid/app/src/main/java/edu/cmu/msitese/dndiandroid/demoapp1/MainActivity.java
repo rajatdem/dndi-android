@@ -18,7 +18,7 @@ import java.util.List;
 
 //import edu.cmu.msitese.dndiandroid.datagathering.gps.LocationDataService;
 import edu.cmu.msitese.dndiandroid.R;
-import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterDao;
+import edu.cmu.msitese.dndiandroid.datagathering.twitter.TwitterInfoDao;
 import edu.cmu.msitese.dndiandroid.datainference.keyword.KeywordCountDao;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFrameworkListener;
@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     @Override
-    public void onKeywordMatch(List<String> keywords) {
+    public void onKeywordMatch(List<String> categories) {
 
-        String result = TextUtils.join(", ", keywords);
+        String result = TextUtils.join(", ", categories);
 
         // generate a list of topics
         sendNotification(result);
@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void onClickClearPreference(View view){
-        TwitterDao twitterDao = new TwitterDao(this);
-        twitterDao.clearTwitterCredential();
+        TwitterInfoDao twitterInfoDao = new TwitterInfoDao(this);
+        twitterInfoDao.clearTwitterCredential();
 
         KeywordCountDao keywordCountDao = new KeywordCountDao(this);
         keywordCountDao.clearTable();
@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements DNDIFrameworkList
     }
 
     public void periodicGPS(View view){
+
         int num;
         try{
             num = Integer.valueOf(mEditTestInput.getText().toString());

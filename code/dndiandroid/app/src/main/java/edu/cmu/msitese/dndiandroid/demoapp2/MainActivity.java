@@ -9,10 +9,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import edu.cmu.msitese.dndiandroid.R;
 import edu.cmu.msitese.dndiandroid.frameworkinterface.DNDIFramework;
@@ -24,18 +28,26 @@ public class MainActivity extends AppCompatActivity implements
     private static final String TAG = "YELP_DEMO";
 
     private static final String APPBAR_TITLE = "Restaurant";
+    private static final float MIN_DISTANCE_DELTA = 100f; // 100 meters
+    private static final int DNDI_DELAY = 500;
+    private static final int UPDATE_DELAY = 5000;
+
     private DNDIFramework dndi;
+    private String mLastCategory = null;
     private Location mLastLocation = null;
     private ListView mListView;
+    private ProgressBar mProgressBar;
+    private boolean hasPulledInBatch = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.demoapp2_activity_main);
         setTitle(APPBAR_TITLE);
-        loadUIComponents();
 
-        new SearchOnYelpTask(this).execute();
+        mListView = (ListView) findViewById(R.id.listView);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
+        mProgressBar.setVisibility(View.VISIBLE);
 
         // initialize the dndi framework
         dndi = new DNDIFramework(this);
@@ -62,8 +74,22 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void loadUIComponents(){
-        mListView = (ListView) findViewById(R.id.listView);
+    @Override
+    protected void onResume(){
+        super.onResume();
+        dndi.resume();
+    }
+
+    @Override
+    protected void onPause(){
+        dndi.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy(){
+        dndi.stop();
+        super.onDestroy();
     }
 
     private void fetchInputFromEditText() {
@@ -71,8 +97,8 @@ public class MainActivity extends AppCompatActivity implements
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
         final EditText edittext = new EditText(this);
-        alert.setMessage("Enter your message");
-        alert.setTitle("Post A Tweet");
+        alert.setMessage("Enter your message here");
+        alert.setTitle("Post a Tweet");
         alert.setIcon(R.drawable.twitter_logo_blue);
         alert.setView(edittext);
 
@@ -98,6 +124,9 @@ public class MainActivity extends AppCompatActivity implements
         // Attach the adapter to a ListView
         mListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        if(mProgressBar.getVisibility() == View.VISIBLE){
+            mProgressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -107,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onPostTaskCompleted() {
-        Log.i(TAG, "post a tweet successfully");
+
     }
 
     @Override
@@ -117,8 +146,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onInitializationCompleted() {
-        Log.i(TAG, "the dndi is initialized successfully");
-//        dndi.pullTweetInBatchAll();
+        new Timer().schedule(new DelayConfigCredential(), DNDI_DELAY);
     }
 
     @Override
@@ -127,18 +155,99 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onKeywordMatch(List<String> keywords) {
+    public void onKeywordMatch(List<String> categories) {
 
+        // always retrieve the first one as query
+        String category = categories.get(0);
+
+        Log.i(TAG, String.format("category update: %s", category));
+        if(mLastLocation != null){
+            if(!category.equals(mLastCategory)){
+                // TODO: update the list view
+                YelpSearchParameter params = new YelpSearchParameter();
+                params.query = category;
+                params.location = mLastLocation;
+                new SearchOnYelpTask(this).execute(params);
+            }
+        }
+
+        mLastCategory = category;
+        if(!hasPulledInBatch){
+            hasPulledInBatch = true;
+            dndi.configTwitterEventMode();
+        }
     }
 
     @Override
     public void onLastLocationUpdate(Location location) {
 
+        Log.i(TAG, "location update");
+        YelpSearchParameter params = new YelpSearchParameter();
+
         if(mLastLocation == null){
             mLastLocation = location;
+            params.location = mLastLocation;
+
+            if(mLastCategory != null){
+                params.query = mLastCategory;
+                new SearchOnYelpTask(this).execute(params);
+            }
+            else{
+                // wait for five seconds before update
+                new Timer().schedule(new DelayUpdateTask(params), UPDATE_DELAY);
+            }
         }
         else{
+            float distance = mLastLocation.distanceTo(location);
+            Log.i(TAG, String.format("Distance: %f", distance));
 
+            // update the last location, prevent update frequently
+            if(distance > MIN_DISTANCE_DELTA){
+                mLastLocation = location;
+                if(mLastCategory != null){
+                    params.query = mLastCategory;
+                }
+                params.location = location;
+                new SearchOnYelpTask(this).execute(params);
+            }
+        }
+    }
+
+    class DelayConfigCredential extends TimerTask {
+
+        @Override
+        public void run() {
+            TwitterCredentialDao dao = new TwitterCredentialDao(MainActivity.this);
+            TwitterCredential credential = dao.getTwitterCredential();
+            dndi.configTwitterCredential(
+                    credential.accessToken,
+                    credential.accessSecret,
+                    credential.screenName);
+            new Timer().schedule(new DelayPullTweet(), DNDI_DELAY);
+        }
+    }
+
+    class DelayPullTweet extends TimerTask {
+
+        @Override
+        public void run() {
+            dndi.pullTweetInBatchAll();
+        }
+    }
+
+    class DelayUpdateTask extends TimerTask {
+
+        private YelpSearchParameter mParam;
+
+        public DelayUpdateTask(YelpSearchParameter param){
+            mParam = param;
+        }
+
+        @Override
+        public void run() {
+            if(mLastCategory.isEmpty()){
+                new SearchOnYelpTask(MainActivity.this).execute(mParam);
+            }
         }
     }
 }
