@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSearchTaskCompleted(List<RestaurantInfoCell> results) {
         final RestaurantInfoListAdapter adapter = new RestaurantInfoListAdapter(this, results);
+
         // Attach the adapter to a ListView
         mListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();

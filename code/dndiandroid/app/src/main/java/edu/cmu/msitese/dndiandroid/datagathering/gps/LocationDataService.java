@@ -63,7 +63,7 @@ public class LocationDataService extends Service implements ZirkEndPoint {
     private static long INTERVAL = 30000; //30secs default
     private static long FAST_INTERVAL = 30000; //30secs default
     private static long DISPLACEMENT = 1000; //1000metres default
-    private static String mode = "NONE";
+    private static String mode = "BATCH";
 
     //Service binding related fields
     private final IBinder mBinder = new LocationDataServiceBinder();
@@ -126,6 +126,7 @@ public class LocationDataService extends Service implements ZirkEndPoint {
 //        mLocationRequestPeriodic = new LocationRequest();
         mLocationRequestPeriodic.setInterval(INTERVAL);
         mLocationRequestPeriodic.setFastestInterval(FAST_INTERVAL);
+        Log.i(TAG, mLocationRequestPeriodic.getSmallestDisplacement()+"");
         mLocationRequestPeriodic.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
@@ -324,45 +325,52 @@ public class LocationDataService extends Service implements ZirkEndPoint {
             @Override
             public void receiveEvent(Event event, ZirkEndPoint zirkEndPoint) {
 
-                final CommandEvent commandEvent = (CommandEvent) event;
-                CommandEvent.CmdType cmdType = commandEvent.type;
-                Log.i(TAG, this.getClass().getName() + ":: received:"+cmdType);
+                if(event instanceof CommandEvent){
 
-                if ((ContextCompat.checkSelfPermission(getApplicationContext(),
-                        Manifest.permission.ACCESS_FINE_LOCATION)) == PERMISSION_DENIED &&
-                        ContextCompat.checkSelfPermission(getApplicationContext(),
-                                Manifest.permission.ACCESS_COARSE_LOCATION) == PERMISSION_DENIED) {
+                    final CommandEvent commandEvent = (CommandEvent) event;
+                    CommandEvent.CmdType cmdType = commandEvent.type;
 
-                    Log.i(TAG, "Location Permission Denied");
+                    if (!commandEvent.target.equals("GPS")) {
+                        return;
+                    }
 
-                } else {
-                    switch (cmdType) {
-                        case CMD_PERIODIC:
-                            mode = Utils.MODE.PERIODIC.toString();
-                            try{
-                                FAST_INTERVAL = Integer.parseInt(commandEvent.extra);
-                            } catch (NumberFormatException nExp) {
-                                //Continue to Use default Value
-                            }
-                            createLocationRequestPeriodic();
-                            getLocationUpdatesPeriodic();
-                            Log.i(TAG, "Mode:"+mode+" | Period:"+FAST_INTERVAL);
-                            break;
-                        case CMD_PULL:
-                            mode = Utils.MODE.BATCH.toString();
-                            getLocation();
-                            break;
-                        case CMD_EVENT:
-                            mode = Utils.MODE.EVENT.toString();
-                            try{
-                                DISPLACEMENT = Integer.parseInt(commandEvent.extra);
-                            } catch (NumberFormatException nExp) {
-                                //Continue to Use default Value
-                            }
-                            createLocationRequestEvent();
-                            getLocationUpdatesEvent();
-                            Log.i(TAG, "Mode:"+mode+" | DeltaDistance:"+DISPLACEMENT);
-                            break;
+                    Log.i(TAG, this.getClass().getName() + ":: received:" + cmdType);
+                    if ((ContextCompat.checkSelfPermission(getApplicationContext(),
+                            Manifest.permission.ACCESS_FINE_LOCATION)) == PERMISSION_DENIED &&
+                            ContextCompat.checkSelfPermission(getApplicationContext(),
+                                    Manifest.permission.ACCESS_COARSE_LOCATION) == PERMISSION_DENIED) {
+
+                        Log.i(TAG, "Location Permission Denied");
+
+                    } else {
+                        switch (cmdType) {
+                            case CMD_PERIODIC:
+                                mode = Utils.MODE.PERIODIC.toString();
+                                try {
+                                    FAST_INTERVAL = Integer.parseInt(commandEvent.extra);
+                                } catch (NumberFormatException nExp) {
+                                    //Continue to Use default Value
+                                }
+                                createLocationRequestPeriodic();
+                                getLocationUpdatesPeriodic();
+                                Log.i(TAG, "Mode:" + mode + " | Period:" + FAST_INTERVAL);
+                                break;
+                            case CMD_PULL:
+                                mode = Utils.MODE.BATCH.toString();
+                                getLocation();
+                                break;
+                            case CMD_EVENT:
+                                mode = Utils.MODE.EVENT.toString();
+                                try {
+                                    DISPLACEMENT = Integer.parseInt(commandEvent.extra);
+                                } catch (NumberFormatException nExp) {
+                                    //Continue to Use default Value
+                                }
+                                createLocationRequestEvent();
+                                getLocationUpdatesEvent();
+                                Log.i(TAG, "Mode:" + mode + " | DeltaDistance:" + DISPLACEMENT);
+                                break;
+                        }
                     }
                 }
             }

@@ -186,14 +186,14 @@ public class DNDIFramework {
 
     public void periodicGPS(int period){
         if (isConnected) {
-            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_PERIODIC, Integer.toString(period));
+            final CommandEvent evt = new CommandEvent("GPS", CommandEvent.CmdType.CMD_PERIODIC, Integer.toString(period));
             mZirkManagerService.sendBezirkEvent(evt);
         }
     }
 
     public void eventGPS(int shortestDist){
         if (isConnected) {
-            final CommandEvent evt = new CommandEvent(CommandEvent.CmdType.CMD_EVENT, Integer.toString(shortestDist));
+            final CommandEvent evt = new CommandEvent("GPS", CommandEvent.CmdType.CMD_EVENT, Integer.toString(shortestDist));
             mZirkManagerService.sendBezirkEvent(evt);
         }
     }

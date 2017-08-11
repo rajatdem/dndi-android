@@ -1,18 +1,36 @@
-# Data normalization and data inference framework
+# Data Preparation framework
 
 A data preparation framework built on top of Bezirk middleware 
 
+[Yu-Lun](https://github.com/stormysun513/)
+
+[Sai Chandana](https://github.com/SaiHariChandana)
+
+[Rajat Mathur](https://github.com/rajatdem)
+
 ## Overview
 
-add the project overview here, include a vrief explanation of zirk here
+DNDI is an Android framework that makes manage zirks (an Android service using the Bezirk middleware for communication among other services). One can create their own zirk and plug into the framework easily. As for the developer, it provides a simple interface to collect multiple data sources with a single interface.
+
+## Architecture
+
+[Sai Chandana](https://github.com/SaiHariChandana)
+
+view diagrams
 
 ## Dependencies
 
-include all third-party libraries required to build the project
+- twitter4j (4.0.6)
+- android-zirk-proxy (3.2.0-snapshot)
+- google-play-services (11.0.1)
+- ranga543/yelp-fusion-client (0.1.2)
 
 ## Installation
 
+[Rajat Mathur](https://github.com/rajatdem)
+
 specify how to include the framework and run along with the android project
+
 - Download or clone the repository [Github Repository](https://github.com/stormysun513/dndi-android)
 - Download and Install Android Studio [Android Studio](https://developer.android.com/studio/index.html)
 - Import the project into Android Studio from the folder where the repository was cloned on the local device.
@@ -97,21 +115,66 @@ public void sendMessage () {
 
 ### Configure access token for data gathering zirk (if required)
 
+[Sai Chandana](https://github.com/SaiHariChandana)
+
 specify how to add an interface to pass access token from application to the target gathering zirk
 
 ### Configure different modes on data gathering zirk
+
+[Sai Chandana](https://github.com/SaiHariChandana)
 
 specify how to configure a gathering zirk into a particular mode
 
 ### Data model for communication between data gathering and data normalization
 
+[Sai Chandana](https://github.com/SaiHariChandana)
+
 specify the rules a data gathering zirk should follow to get normalization zirk work for you
 
 ### Implement application callbacks when there is a notification
 
-specify how to implement one's own business logic when there is a keyword match event 
+Any application related events (e.g. KEYWORD\_MATCH, LOCATION\_UPDATE) will be collect by the ZirkManagerService first and forward to the DNDIFramework through broadcast intents. The current version has implemented interfaces for these two events. One just implements the DNDIFrameworkListener interfaces for retrieving these information. If one would like to add more events, one should first declare a new method in the DNDIFrameworkListener and add corresponding code in the broadcast receiver in DNDIFramework. 
+
+```java
+// the broadcast receiver callback that parse the intent and call corresponding callback functions
+private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        String result = intent.getStringExtra(RESULT);
+        switch (result){
+            case KEYWORD_MATCHED:
+            ArrayList<String> keywords = intent.getStringArrayListExtra(KEYWORD_MATCHED);
+            if(mContext instanceof DNDIFrameworkListener){
+                ((DNDIFrameworkListener) mContext).onKeywordMatch(keywords);
+            }
+            break;
+        case RAW_LOCATION:
+            Location location = intent.getParcelableExtra(RAW_LOCATION);
+            if(mContext instanceof DNDIFrameworkListener){
+                ((DNDIFrameworkListener) mContext).onLastLocationUpdate(location);
+            }
+            break;
+        case ERROR:
+        default:
+            break;
+        }
+    }
+};
+```
+
+With regard to the sender side, one can define one's own intent keys and send through th broadcast intent. The example code below is in the bezirk receiver in ZirkManagerService.
+
+```java
+final KeywordMatchEvent keywordMatchEvent = (KeywordMatchEvent) event;
+Intent intent = new Intent(ACTION);
+intent.putExtra(DNDIFramework.RESULT, DNDIFramework.KEYWORD_MATCHED);
+intent.putStringArrayListExtra(DNDIFramework.KEYWORD_MATCHED, keywordMatchEvent.getMatchList());
+LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
+```
 
 ### Define your own event
+
+[Sai Chandana](https://github.com/SaiHariChandana)
 
 specify the rules one has to abide by if one would like to create one's own zirk
 
@@ -155,11 +218,79 @@ Format of the JSON file
 
 ### Test the new components
 
-specify how to unit test and integration test the framework
+One may consider testing the new zirk to the framework. One can refer to some androidtest files in the test directory. We illustrate the way how a zirk is tested. 
 
-### Maintain application lifecycle for resource cleanup
+Each testcase has its own context, so one has to initialize the bezirk middleware everytime. Later, create an object used to notify the waiting main thread. The reason why we implement th testcase in this way is that bezirk requires time for initialization. A TimerTask is required to have a slight delay before starting testing. After having this code structure, one can put the testing logics in the `run()` function overrided by the TimerTask.
 
-specify the rules an application should follow when use this framework
+```java
+@Test(timeout = 30000)
+public void testKeywordMatchEvent() throws InterruptedException {
+    // initialize the Bezirk service for testing
+    BezirkMiddleware.initialize(getContext());
+	
+    // sync object used to check whether timertask completes before the timeout budget
+    final Object syncObject = new Object();
+	
+    new Timer().schedule(new TimerTask() {
+        @Override
+        public void run() {
+	
+            // Bind the service and grab a reference to the binder.
+            IBinder binder = bindService(new Intent(getContext(), KeywordMatchService.class));
+            assertNotNull(binder);
+		
+            // Get service instances
+            KeywordMatchService service = ((KeywordMatchService.KeywordMatchServiceBinder) binder).getService();
+            assertNotNull(service);
+
+            // TODO: add testing logic here
+		
+            BezirkMiddleware.stop();
+			
+            synchronized (syncObject) {
+                syncObject.notify();
+            }
+        }
+    }, 1000);
+	
+    // wait for timertask to complete
+    synchronized (syncObject) {
+        syncObject.wait();
+    }
+}
+```
+
+Although most zirks are running independently and no other activities or services will bind to them, one may still implement the `onBind` method and return a IBinder for testing purpose. The latest Android SDK has provided an anotation for methods that is defined for testing only. One can check the usage of anotation `@VisibleForTesting(otherwise = VisibleForTesting.NONE)`.
+
+### Maintain the lifecycle for resource cleanup and power saving
+
+The communication between ZirkManagerService and a app forground activity is done through Android broadcast intent. The ZirkManagerService gathers information needed for the activity to refresh the GUI components and send it. The DNDIFramework is owned by the main activity so it is in the same memory space as the activity. It registers a broadcast receiver with a particular intent filter to collect intents sent by the ZirkManagerService only.
+
+The application needs the information only when it is running in the foreground, because there is no need to update GUI when running in the background (android service). The following code snippet applies to foreground applicaiton only. If the DNDIFramework instance is owned by a service. It may keep listening to the broadcat intent throughtout the entire lifecycle.
+
+When an applicaiton is removed from the foreground, the `onPause` function is called. When an application is back to the foreground, the `onResume` function is called. Therefore, one may consider override them and call the following methods.
+
+```java
+@Override
+protected void onResume(){
+    super.onResume();
+    dndi.resume();
+}
+
+@Override
+protected void onPause(){
+    dndi.pause();
+    super.onPause();
+}
+
+@Override
+protected void onDestroy(){
+    dndi.stop();
+    super.onDestroy();
+}
+```
+
+Sometimes, one may have multiple activities in an single application. Each activity may need some information from the DNDIFramework. One can simply instantiate another DNDIFramework and it will bind to the ZirkManagerService, which is design in a singleton pattern.
 
 ## For more information
 
