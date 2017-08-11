@@ -13,6 +13,13 @@ The team consists of 3 members
 
 DNDI is an Android framework that makes managing Zirks (an Android service using the Bezirk middleware for communication among other services) easier. One can create their own Zirk and plug into the framework easily. As for the developer, it provides a simple interface to collect multiple data sources with a single interface.
 
+## Example Use Cases
+
+- Learn the user interest from historical tweets and fuse with location data
+- Update of fused results when there is a location change
+- Real-time update of interest categories with new tweets from the user
+
+
 ## Architecture
 
 ### Context Diagram
