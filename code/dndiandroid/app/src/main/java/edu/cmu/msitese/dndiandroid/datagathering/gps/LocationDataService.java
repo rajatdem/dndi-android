@@ -376,6 +376,7 @@ public class LocationDataService extends Service implements ZirkEndPoint {
             }
         });
         bezirk.subscribe(eventSet);
+        Log.i(TAG, this.getClass().getName() + ":: wait...");
     }
 
     //TESTING
