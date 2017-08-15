@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.IntDef;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -56,7 +57,7 @@ public class GeocodingService extends Service {
     }
 
     public class GeocodingServiceBinder extends Binder {
-        GeocodingService getService() {
+        public GeocodingService getService() {
             return GeocodingService.this;
         }
     }
@@ -158,5 +159,10 @@ public class GeocodingService extends Service {
         else {
             Log.i(TAG, "No Network Available");
         }
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public String getLatLong(){
+        return mLocation.getLongitude() + ":" + mLocation.getLatitude();
     }
 }

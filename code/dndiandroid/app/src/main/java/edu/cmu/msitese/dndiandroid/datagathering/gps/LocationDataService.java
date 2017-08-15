@@ -381,22 +381,6 @@ public class LocationDataService extends Service implements ZirkEndPoint {
     }
 
     //TESTING
-    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
-    public class LocationServiceBinder extends Binder {
-        public LocationDataService getService() {
-            return LocationDataService.this;
-        }
-    }
-
-    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-    public void setBezirkInstance(Bezirk tBezirk){ this.bezirk = tBezirk;
-    }
-
-    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-    public void setEventSetSubscriptionHandler(EventSet.EventReceiver receiver){
-        eventSet.setEventReceiver(receiver);
-    }
-
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public EventSet.EventReceiver getEventSetSubscriptionHandler(){
         return eventSet.getEventReceiver();

@@ -7,16 +7,19 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import static java.security.AccessController.getContext;
 
 public class LocationActivity extends Activity {
 
     private final static String TAG = "LocationActivity";
     private static final int REQUEST_CODE_PERMISSION = 2;
     private static Boolean mPermissionStatus = false;
-    private String mPermissionFine = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static String mPermissionFine = Manifest.permission.ACCESS_FINE_LOCATION;
     private String mPermissionCoarse = Manifest.permission.ACCESS_COARSE_LOCATION;
 
 
@@ -38,6 +41,7 @@ public class LocationActivity extends Activity {
             }
             else{
                 Log.i(TAG, "Permission Granted and exiting");
+                mPermissionStatus = true;
                 finish();
             }
         } catch (Exception e) {
@@ -88,5 +92,10 @@ public class LocationActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @VisibleForTesting
+    public int getmPermissionStatus() {
+        return ActivityCompat.checkSelfPermission(this, mPermissionFine);
     }
 }

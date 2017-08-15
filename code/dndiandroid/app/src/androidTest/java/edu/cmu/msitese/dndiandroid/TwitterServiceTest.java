@@ -42,7 +42,7 @@ public class TwitterServiceTest extends ServiceTestCase<TwitterService> {
         super(TwitterService.class);
     }
 
-    @Test(timeout = 30000)
+    @Test(timeout = 50000)
     public void testTwitterModeSelectionAndOperation() throws InterruptedException {
 
         // initialize the Bezirk service for testing
@@ -125,7 +125,7 @@ public class TwitterServiceTest extends ServiceTestCase<TwitterService> {
                             CommandEvent.CmdType.CMD_PULL);
                     bezirk.sendEvent(event4);
 
-                    Thread.sleep(1000);
+                    Thread.sleep(2500);
                     assertTrue(service.getCurrentMode() == TwitterService.Mode.PULL);
                     verify(spyTwitter, times(2)).getUserTimeline(any(String.class), any(Paging.class));
 
@@ -136,7 +136,7 @@ public class TwitterServiceTest extends ServiceTestCase<TwitterService> {
                             "20");
                     bezirk.sendEvent(event5);
 
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                     assertTrue(service.getCurrentMode() == TwitterService.Mode.PULL);
                     verify(spyTwitter, times(3)).getUserTimeline(any(String.class), any(Paging.class));
 
@@ -235,7 +235,7 @@ public class TwitterServiceTest extends ServiceTestCase<TwitterService> {
         }
     }
 
-    @Test(timeout=10000)
+    @Test(timeout=20000)
     public void testSendTwitterEventNotificationDoesCallBezirkSend() throws InterruptedException {
 
         // initialize the Bezirk service for testing
